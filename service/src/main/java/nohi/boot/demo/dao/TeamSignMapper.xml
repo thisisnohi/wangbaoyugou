@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nohi.boot.demo.dao.TeamSignMapper">
+
+
+  <select id="selectUserKaoQin" resultType="nohi.boot.demo.dto.query.TeamUserSignInfo">
+    select s.*, u.name
+    from TEAM_SIGN s inner join TEAM_USER u on s.user_id = u.id
+    where
+    u.name = #{name}
+    <![CDATA[
+      and s.date >= #{startDate} and s.date <=  #{endDate}
+    ]]>
+  </select>
+</mapper>
