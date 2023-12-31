@@ -11,4 +11,9 @@ public interface TeamUserMapper extends BaseMapper<TeamUser> {
 
 
     List<TeamUser> findByName(String name);
+
+    List<TeamUser> findListByCond(TeamUser cond);
+
+    void updateByExample(TeamUser teamUser);
+
 }

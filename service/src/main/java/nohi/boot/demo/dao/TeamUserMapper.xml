@@ -7,4 +7,52 @@
     SELECT *
     FROM TEAM_USER WHERE name = #{name}
   </select>
+
+  <select id="findListByCond" resultType="nohi.boot.demo.entity.TeamUser" parameterType="nohi.boot.demo.entity.TeamUser">
+    SELECT *
+    FROM TEAM_USER
+    <where>
+      <if test="id!=null and id!=''">
+        AND id = #{id}
+      </if>
+      <if test="name!=null and name!=''">
+        AND name = #{name}
+      </if>
+      <if test="phone!=null and phone!=''">
+        AND phone = #{phone}
+      </if>
+      <if test="accesstoken!=null and accesstoken!=''">
+        AND accesstoken = #{accesstoken}
+      </if>
+      <if test="cardid!=null and cardid!=''">
+        AND cardid = #{cardid}
+      </if>
+      <if test="personid!=null and personid!=''">
+        AND personid = #{personid}
+      </if>
+    </where>
+  </select>
+
+  <update id = "updateByExample" parameterType="nohi.boot.demo.entity.TeamUser">
+   UPDATE TEAM_USER
+    <set>
+      <if test="name!=null and name!=''">
+         name = #{name},
+      </if>
+      <if test="phone!=null and phone!=''">
+         phone = #{phone},
+      </if>
+      <if test="accesstoken!=null and accesstoken!=''">
+         accesstoken = #{accesstoken},
+      </if>
+      <if test="cardid!=null and cardid!=''">
+         cardid = #{cardid},
+      </if>
+      <if test="personid!=null and personid!=''">
+         personid = #{personid},
+      </if>
+      id = #{id}
+   where id = #{id}
+    </set>
+  </update>
 </mapper>

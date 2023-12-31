@@ -7,6 +7,8 @@ import nohi.boot.demo.entity.TeamUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <h3>SpringBootTest</h3>
  *
@@ -27,6 +29,12 @@ public class TeamUserService extends ServiceImpl<TeamUserMapper, TeamUser>  {
 
     public TeamUser findTopUserByName(String name) {
         return mapper.findByName(name).stream().findFirst().get();
+    }
+
+    public List<TeamUser> findListByCond(TeamUser cond){return mapper.findListByCond(cond);}
+
+    public void updateByExample(TeamUser teamUser){
+         mapper.updateByExample(teamUser);
     }
 
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -29,29 +30,34 @@ public class TeamUser {
      *   TEAM_USER.name
      */
     @TableField("name")
+    @NotBlank(message = "姓名不能为空")
     private String name;
 
     /**
      *   手机号
      *   TEAM_USER.phone
      */
+    @NotBlank(message = "手机号不能为空")
     private String phone;
 
     /**
      *   accesstoken
      *   TEAM_USER.accesstoken
      */
+    @NotBlank(message = "token不能为空")
     private String accesstoken;
 
     /**
      *   cardid
      *   TEAM_USER.cardid
      */
+    @NotBlank(message = "cardid不能为空")
     private String cardid;
 
     /**
      *   personId
      *   TEAM_USER.personId
      */
+    @NotBlank(message = "personId不能为空")
     private String personid;
 }
