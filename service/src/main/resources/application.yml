@@ -53,3 +53,9 @@ logging:
     nohi.boot: debug
     org.apache.http.wire: debug
     org.apache.http.headers: debug
+dingtalk:
+  robot:
+    appKey: ''
+    appSecret: ''
+    accessToken: '6b314ee33ed4227255220d85723992b661f7ca4d92f38cbf11539fc9e4b707a6'
+    dingTalkServer: https://oapi.dingtalk.com

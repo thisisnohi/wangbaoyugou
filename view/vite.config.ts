@@ -4,7 +4,7 @@
  * @LastEditors: Please set LastEditors
  * @LastEditTime: 2023-02-21 22:57:42
  * @FilePath: \vue-admin-box\vite.config.ts
- * @Description: 
+ * @Description:
  */
 import { ConfigEnv, UserConfigExport } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -20,7 +20,7 @@ const alias: Record<string, string> = {
   '@': pathResolve("src")
 }
 
-/** 
+/**
  * @description-en vite document address
  * @description-cn vite官网
  * https://vitejs.cn/config/ */
@@ -38,7 +38,7 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
       proxy: { // 代理配置
         '/dev': 'https://www.fastmock.site/mock/48cab8545e64d93ff9ba66a87ad04f6b/',
         '/dd-mp/': {
-          target: 'http://127.0.0.1:8080/dd-mp/',
+          target: 'http://127.0.0.1:8080/',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/dd-mp/, '')
         }

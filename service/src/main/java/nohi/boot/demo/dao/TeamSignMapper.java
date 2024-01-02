@@ -1,6 +1,7 @@
 package nohi.boot.demo.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import nohi.boot.demo.dto.kaoqin.query.UserDutyTime;
 import nohi.boot.demo.dto.query.TeamUserSignInfo;
 import nohi.boot.demo.entity.TeamSign;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,5 +21,6 @@ public interface TeamSignMapper extends BaseMapper<TeamSign> {
      * @return
      */
     List<TeamUserSignInfo> selectUserKaoQin(@Param("name") String name, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    List<UserDutyTime> selectUserDutyTime(@Param("date") String date);
 
 }

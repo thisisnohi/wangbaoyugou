@@ -12,4 +12,16 @@
       and s.date >= #{startDate} and s.date <=  #{endDate}
     ]]>
   </select>
+
+  <select id="selectUserDutyTime"
+          resultType="nohi.boot.demo.dto.kaoqin.query.UserDutyTime">
+    select u.name,u.phone, s.date, s.min_time minTime, s.max_time maxTime
+    from TEAM_USER u
+           left join (
+      select  user_id, date, min(time) min_time , max(time) max_time from TEAM_SIGN
+      where date = #{date}
+      group by user_id, date
+    ) s on s.user_id = u.id
+    order by u.id
+  </select>
 </mapper>

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import nohi.boot.demo.dao.TeamSignMapper;
 import nohi.boot.demo.dao.TeamUserMapper;
+import nohi.boot.demo.dto.kaoqin.query.UserDutyTime;
 import nohi.boot.demo.dto.query.TeamUserSignInfo;
 import nohi.boot.demo.entity.TeamSign;
 import nohi.boot.demo.entity.TeamUser;
@@ -63,6 +64,14 @@ public class TeamSignService extends ServiceImpl<TeamSignMapper, TeamSign> {
      */
     public List<TeamUserSignInfo> selectUserKaoQin(String name, String startDate, String endDate) {
         return mapper.selectUserKaoQin(name, startDate, endDate);
+    }
+
+    /**
+     * 根据日期获取所有用户考勤数据
+     * @param date 日期
+     */
+    public List<UserDutyTime> selectUserDutyTime(String date){
+        return mapper.selectUserDutyTime(date);
     }
 
 }

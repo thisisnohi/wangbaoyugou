@@ -15,51 +15,6 @@ const route: Route[] = [
     },
     children: [
       {
-        path: 'dept',
-        component: createNameComponent(() => import('@/views/dingTalk/dept/dept.vue')),
-        name: 'DeptList',
-        meta: {
-          title: '部门列表',
-          icon: 'sfont system-component'
-        }
-      },
-      {
-        path: 'user',
-        component: createNameComponent(() => import('@/views/dingTalk/user/user.vue')),
-        name: 'UserList',
-        meta: {
-          title: '用户列表',
-          icon: 'sfont system-xingmingyonghumingnicheng'
-        }
-      },
-      {
-        path: 'dingTalkList',
-        component: createNameComponent(() => import('@/views/dingTalk/timesheet/dingtalkList.vue')),
-        name: 'DingTalkList',
-        meta: {
-          title: '考勤列表',
-          icon: 'sfont system-yonghu'
-        }
-      },
-      {
-        path: 'empsWorkSheet',
-        component: createNameComponent(() => import('@/views/dingTalk/timesheet/empsWorkSheet.vue')),
-        name: 'EmpsWorkSheet',
-        meta: {
-          title: '考勤汇总',
-          icon: 'sfont system-document'
-        }
-      },
-      {
-        path: 'dingTalkSync',
-        component: createNameComponent(() => import('@/views/dingTalk/timesheet/dingtalkSync.vue')),
-        name: 'DingTalkSync',
-        meta: {
-          title: '同步数据',
-          icon: 'sfont system-shezhi'
-        }
-      },
-      {
         path: 'dingTokenList',
         component: createNameComponent(() => import('@/views/dingTalk/user/dingTokenList.vue')),
         name: 'dingTokenList',

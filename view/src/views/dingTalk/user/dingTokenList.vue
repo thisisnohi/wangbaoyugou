@@ -30,7 +30,7 @@
             <span>{{ row.phone }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="token" prop="accesstoken" min-width="25%">
+        <el-table-column align="center" label="token" prop="accesstoken" min-width="25%">
           <template #default="{row}">
             <el-input v-model="row.accesstoken"  />
           </template>
