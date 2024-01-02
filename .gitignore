@@ -44,3 +44,4 @@ npm-debug.log
 yarn-error.log
 
 /.idea/
+/service/src/main/resources/application-local.yml

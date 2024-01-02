@@ -1,0 +1,36 @@
+-- auto-generated definition
+create table CAR_MAINTAIN_HIS
+(
+    ID                             varchar(200) null comment 'ID',
+    A_EcMaster_BX_AMT              varchar(200) null comment '保险结算合计',
+    A_BILL_DATE                    varchar(200) null comment '单据日期',
+    A_EcMaster_BX_CL_AMT           varchar(200) null comment '保险材料费',
+    A_BILL_TYPE                    varchar(200) null,
+    A_AMT                          varchar(200) null comment '自付材料',
+    A_EcMaster_CARD_CL_AMT         varchar(200) null comment '卡材料费',
+    A_EcMaster_SV_STATUS           varchar(200) null comment '维修状态',
+    A_VEHICLEID_LICENSE_PLATE_CODE varchar(200) null comment '车牌号码',
+    A_TMP_ISBALANCE                varchar(200) null comment '结清否',
+    A_EcMaster_CARD_AMT            varchar(200) null comment '卡金额合计',
+    A_EcMaster_SB_GS_AMT           varchar(200) null comment '三包工时费',
+    A_EcMaster_KILOMETRE           varchar(200) null comment '进厂里程',
+    A_EcMaster_BX_GS_AMT           varchar(200) null comment '保险工时费',
+    A_DEPTID_ACCTTYPE_ACCT_TYPE    varchar(200) null,
+    A_EcMaster_SB_AMT              varchar(200) null comment '三包结算合计',
+    A_EcMaster_SB_CL_AMT           varchar(200) null comment '三包材料费',
+    A_VEHICLEID_ITEMID_ITEM_NAME   varchar(200) null comment '车型',
+    A_EcMaster_SB_CLHS_AMT         varchar(200) null comment '三包回收冲抵',
+    A_STAFFID_STAFF_NAME           varchar(200) null comment '接待人',
+    A_EcMaster_CARD_GS_AMT         varchar(200) null comment '卡工时费',
+    A_TTL_AMT                      varchar(200) null comment '应收合计',
+    A_DEPTID_DEPT_NAME             varchar(200) null comment '部门名称',
+    A_BILL_ID                      varchar(200) null,
+    A_ORTHER_AMT                   varchar(200) null comment '回收冲抵',
+    A_VEHICLEID_CUSTID_CUST_NAME   varchar(200) null comment '客户名称',
+    A_EcMaster_DRIVER_TEL          varchar(200) null comment '客户联系电话',
+    A_EcMaster_SVTYPE_DESCRIPTION  varchar(200) null comment '维修类别',
+    A_EcMaster_GS_AMT              varchar(200) null comment '自付工时',
+    A_BILL_NO                      varchar(200) null comment '维修单号',
+    A_STRIKE_AMT                   varchar(200) null comment '实收金额'
+);
+
