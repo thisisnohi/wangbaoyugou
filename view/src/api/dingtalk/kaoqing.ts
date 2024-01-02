@@ -87,4 +87,26 @@ export function empWorkSheet(searchParam: object) {
     method: 'post',
     data: searchParam
   })
+
+}
+export function userTokenQuery(page: object, searchParam: object) {
+  return requestTx({
+    url: '/teamKaoQin/userInfo/query',
+    method: 'post',
+    data: {
+      page,
+      searchParam
+    }
+  })
+
+}
+export function userInfoSave(data: object) {
+  return requestTx({
+    url: '/teamKaoQin/userInfo/save',
+    method: 'post',
+    data: {
+      data
+    }
+  })
+
 }

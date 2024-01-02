@@ -58,7 +58,16 @@ const route: Route[] = [
           title: '同步数据',
           icon: 'sfont system-shezhi'
         }
-      }
+      },
+      {
+        path: 'dingTokenList',
+        component: createNameComponent(() => import('@/views/dingTalk/user/dingTokenList.vue')),
+        name: 'dingTokenList',
+        meta: {
+          title: 'TOKEN维护',
+          icon: 'sfont system-yonghu'
+        }
+      },
     ]
   }
 ]
