@@ -1,8 +1,6 @@
 package nohi.boot.demo.web;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
 import com.dingtalk.api.response.OapiRobotSendResponse;
 import com.github.pagehelper.PageHelper;
@@ -11,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.taobao.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import nohi.boot.demo.config.MpConfig;
 import nohi.boot.demo.consts.DingTalkConsts;
@@ -30,15 +27,11 @@ import nohi.boot.demo.service.db.TeamUserService;
 import nohi.boot.demo.utils.DateUtils;
 import nohi.boot.demo.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import nohi.boot.demo.dto.*;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -118,7 +111,7 @@ public class TeamKaoQinController {
             for (String item : msgList) {
                 sb.append("  \n  ").append(item);
             }
-            sb.append("\n消息来自NOHI机器人");
+            sb.append("\n消息来自NOHI机器人 ").append(DateUtils.format(new Date(), DateUtils.HYPHEN_TIME));
             this.alert("同步考勤数据", sb.toString());
         }
         log.info("{} 结束，msg:{}", title, msgList);
@@ -132,10 +125,7 @@ public class TeamKaoQinController {
         String dateStr = DateUtils.format(startDate);
         String title = String.format("考勤预警[%s][%s]", dateStr, type);
         // 默认上班
-        boolean duty = true;
-        if (KaoQinConsts.DutyType.OFF_DUTY.getCode().equals(type)) {
-            duty = false;
-        }
+        boolean duty = !KaoQinConsts.DutyType.OFF_DUTY.getCode().equals(type);
 
         log.info("{} duty[{}]开始", title, duty);
         List<UserDutyTime> list = teamSignService.selectUserDutyTime(dateStr);
@@ -146,7 +136,7 @@ public class TeamKaoQinController {
             // 上班
             if (duty) {
                 if (StringUtils.isBlank(item.getMinTime()) || item.getMinTime().compareTo(KaoQinConsts.DutyType.ON_DUTY.getValue()) > 0) {
-                    sb.append(item.getName()).append(" 今日休息");
+                    sb.append(item.getName()).append(" 上班未打卡");
                 } else {
                     sb.append(item.getName()).append(" 上班时间:").append(item.getMinTime());
                 }
@@ -159,9 +149,9 @@ public class TeamKaoQinController {
             }
             sb.append("  \n  ");
         }
-        log.info("{} msg:{}", title, sb.toString());
+        log.info("{} msg:{}", title, sb);
 
-        sb.append("\n\n消息来自NOHI自定义机器人!!!");
+        sb.append("\n\n消息来自NOHI自定义机器人!!! ").append(DateUtils.format(new Date(), DateUtils.HYPHEN_TIME));
         // 预警
         this.alert(dateStr + "打卡提醒", sb.toString());
 
