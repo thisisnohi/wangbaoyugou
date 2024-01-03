@@ -41,6 +41,8 @@ import nohi.boot.demo.dto.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 团队考勤
@@ -98,6 +100,11 @@ public class TeamKaoQinController {
             log.info("{} 同步[{}]", title, item.getName());
             // 同步所有用户考勤
             String msg = kaoQinService.synUserKaoQin("同步考勤", item, startDate, startDate);
+            try {
+                TimeUnit.SECONDS.sleep(new Random().nextInt(10) + 1);
+            } catch (InterruptedException e) {
+                log.error("sleep 异常:{}", e.getMessage());
+            }
             if (StringUtils.isNotBlank(msg)) {
                 msgList.add(msg);
             }
