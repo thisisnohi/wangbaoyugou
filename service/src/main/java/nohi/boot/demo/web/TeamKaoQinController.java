@@ -111,7 +111,7 @@ public class TeamKaoQinController {
             for (String item : msgList) {
                 sb.append("  \n  ").append(item);
             }
-            sb.append("\n消息来自NOHI机器人 ").append(DateUtils.format(new Date(), DateUtils.HYPHEN_TIME));
+            sb.append("  \n  消息来自NOHI机器人 ").append(DateUtils.format(new Date(), DateUtils.HYPHEN_TIME));
             this.alert("同步考勤数据", sb.toString());
         }
         log.info("{} 结束，msg:{}", title, msgList);
