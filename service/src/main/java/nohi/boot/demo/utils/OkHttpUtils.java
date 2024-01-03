@@ -3,6 +3,7 @@ package nohi.boot.demo.utils;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -76,7 +77,10 @@ public class OkHttpUtils {
 
         //添加拦截器
         clientBuilder.addInterceptor(new OkHttpLogInterceptor());
-        mOkHttpClient = clientBuilder.build();
+        HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor(new HttpLogger());
+        logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        mOkHttpClient = clientBuilder.addNetworkInterceptor(logInterceptor).build();
+
     }
 
     /**
