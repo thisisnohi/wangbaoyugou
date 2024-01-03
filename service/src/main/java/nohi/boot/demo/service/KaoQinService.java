@@ -115,6 +115,27 @@ public class KaoQinService {
         Map<String, String> map = new HashMap<>();
         map.put(HEADER_TOKEN, user.getAccesstoken());
         map.put(HEADER_CARDID, user.getCardid());
+        map.put("Referer", "https://fhkq.ccbft.com/dist/");
+        map.put("Origin","https://fhkq.ccbft.com");
+//        map.put(":authority","fhkq.ccbft.com");
+//        map.put(":method","POST");
+//        map.put(":path","/fhkq-manager/AttendanceManager/myAttendance");
+//        map.put(":scheme","https");
+        map.put("Accept","application/json, text/plain, */*");
+        map.put("Accept-Encoding","gzip, deflate, br");
+        map.put("Accept-Language","zh-CN,zh;q=0.9");
+        map.put("Cache-Control","no-cache");
+        map.put("Content-Type","application/json;charset=UTF-8");
+        //map.put("Cookie","JSESSIONID=D27DA31870DED89B9D60AB6E2444533D; VUE_ADMIN_TEMPLATE=d208943441ba4696aef647a07e105cad");
+        map.put("Pragma","no-cache");
+
+         map.put("Sec-Ch-Ua","\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"");
+        map.put("Sec-Ch-Ua-Mobile","?0");
+        map.put("Sec-Ch-Ua-Platform","macOS");
+        map.put("Sec-Fetch-Dest","empty");
+        map.put("Sec-Fetch-Mode","cors");
+        map.put("Sec-Fetch-Site","same-origin");
+         map.put("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
         return map;
     }
 
