@@ -11,6 +11,7 @@ import nohi.boot.demo.service.db.TeamSignService;
 import nohi.boot.demo.utils.DateUtils;
 import nohi.boot.demo.utils.OkHttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,7 +28,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class KaoQinService {
-    private String url = "http://127.0.0.1:8099/fhkq-manager/AttendanceManager/myAttendance";
+    @Value("${data.kqUrl}")
+    private String url;
     public static String HEADER_TOKEN = "Accesstoken";
     public static String HEADER_CARDID = "Cardid";
 

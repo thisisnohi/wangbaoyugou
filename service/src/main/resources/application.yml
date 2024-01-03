@@ -59,3 +59,5 @@ dingtalk:
     appSecret: ''
     accessToken: '6b314ee33ed4227255220d85723992b661f7ca4d92f38cbf11539fc9e4b707a6'
     dingTalkServer: https://oapi.dingtalk.com
+data:
+  kqUrl: http://127.0.0.1:8099/fhkq-manager/AttendanceManager/myAttendance
