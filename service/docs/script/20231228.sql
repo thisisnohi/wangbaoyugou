@@ -20,6 +20,13 @@ CREATE TABLE team_sign  (
 
 insert into team_user (id, name, phone, accesstoken, cardid, personId)
 values ('1', '丁龙海', '18012920403', '4ab231edc9334145929595a33a6484ad','lr1xXRrwLzCiQFCkFzs1FA==','19dbe154031e11ed800a005056b51891');
-
 insert into team_user (id, name, phone, accesstoken, cardid, personId)
 values ('2', '杜帅', '18012920403', '9af122279f08403c99488cb0edc50d9a','vW4X9DSl7A1AWfx6YHFUaQ==','19dc44cd031e11ed800a005056b51891');
+insert into team_user (id, name, phone, accesstoken, cardid, personId)
+values ('3', '郑峰', '', '','','');
+insert into team_user (id, name, phone, accesstoken, cardid, personId)
+values ('4', '夏志铭', '', '','','');
+insert into team_user (id, name, phone, accesstoken, cardid, personId)
+values ('5', '李春亭',  '', '','','');
+insert into team_user (id, name, phone, accesstoken, cardid, personId)
+values ('6', '吕晓朋',  '', '','','');
