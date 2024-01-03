@@ -59,6 +59,11 @@ public class KaoQinService {
 
             String respString = OkHttpUtils.getInstance().postJson(url, headerMap, JSONObject.toJSONString(param));
             log.info("{} respString:{}", subTitle, respString);
+            if (null!=respString && !respString.startsWith("{")) {
+                log.warn("{} 响应报文异常", subTitle);
+                msg = user.getName() + "\t响应报文异常";
+                return msg;
+            }
             // 转换响应数据
             KaoQinResp resp = JSONObject.parseObject(respString, KaoQinResp.class);
             log.info("{} resp:{}", subTitle, resp);
