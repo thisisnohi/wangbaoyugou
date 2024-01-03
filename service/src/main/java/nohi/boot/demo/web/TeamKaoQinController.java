@@ -116,7 +116,7 @@ public class TeamKaoQinController {
         if (!msgList.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (String item : msgList) {
-                sb.append(item).append("\n");
+                sb.append("  \n  ").append(item);
             }
             sb.append("\n消息来自NOHI机器人");
             this.alert("同步考勤数据", sb.toString());

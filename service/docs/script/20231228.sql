@@ -27,6 +27,8 @@ values ('3', '郑峰', '', '','','');
 insert into team_user (id, name, phone, accesstoken, cardid, personId)
 values ('4', '夏志铭', '', '','','');
 insert into team_user (id, name, phone, accesstoken, cardid, personId)
-values ('5', '李春亭',  '', '','','');
+values ('5', '赵明杰',  '', '','','');
 insert into team_user (id, name, phone, accesstoken, cardid, personId)
 values ('6', '吕晓朋',  '', '','','');
+insert into team_user (id, name, phone, accesstoken, cardid, personId)
+values ('7', '胡瑞平',  '', '','','');
