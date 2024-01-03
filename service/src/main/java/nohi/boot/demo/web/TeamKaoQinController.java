@@ -139,6 +139,7 @@ public class TeamKaoQinController {
         List<UserDutyTime> list = teamSignService.selectUserDutyTime(dateStr);
 
         StringBuilder sb = new StringBuilder();
+        sb.append("  \n  ");
         for (UserDutyTime item : list) {
             // 上班
             if (duty) {
@@ -154,7 +155,7 @@ public class TeamKaoQinController {
                     sb.append(item.getName()).append(" 下班时间:").append(item.getMaxTime());
                 }
             }
-            sb.append("\n");
+            sb.append("  \n  ");
         }
         log.info("{} msg:{}", title, sb.toString());
 
