@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
  */
 @Slf4j
 @SpringBootApplication
+@MapperScan(value = "nohi.boot")
 public class SpringBootTestApplication {
 
 	public static void main(String[] args) {

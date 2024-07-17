@@ -93,13 +93,31 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.30</version>
+      <version>8.0.33</version>
     </dependency>
     <dependency>
       <groupId>com.baomidou</groupId>
       <artifactId>mybatis-plus-boot-starter</artifactId>
-      <version>3.5.3</version>
+      <version>3.5.7</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-generator</artifactId>
+      <version>3.5.7</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-engine-core</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.31</version>
+    </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -115,7 +133,7 @@
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
-      <version>5.8.15</version>
+      <version>5.8.20</version>
       <scope>compile</scope>
     </dependency>
 
@@ -170,6 +188,12 @@
       <artifactId>alibaba-dingtalk-service-sdk</artifactId>
       <version>2.0.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>easyexcel</artifactId>
+      <version>2.2.11</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -182,6 +206,7 @@
           <include>**/*.xml</include>
           <include>**/*.html</include>
           <include>**/*.sql</include>
+          <include>**/*.xlsx</include>
         </includes>
         <filtering>false</filtering>
       </resource>
