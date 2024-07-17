@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nohi.boot.kqjs.mapper.QuarterJsMapper">
+
+  <resultMap id="BaseResultMap" type="nohi.boot.kqjs.entity.QuarterJs">
+    <result column="CREATED_TS" jdbcType="TIMESTAMP" property="createdTs" />    <!-- 记录创建时间 -->
+    <result column="PROJECT" jdbcType="VARCHAR" property="project" />    <!-- 项目 -->
+    <result column="WORK_DATE" jdbcType="DATE" property="workDate" />    <!-- 工作日 -->
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />    <!-- 姓名 -->
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />    <!-- 开始时间 -->
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />    <!-- 结束时间 -->
+    <result column="HOURS" jdbcType="DECIMAL" property="hours" />    <!-- 打卡小时数 -->
+    <result column="MINS" jdbcType="DECIMAL" property="mins" />    <!-- 打卡分钟数 -->
+    <result column="DEDUCTION" jdbcType="DECIMAL" property="deduction" />    <!-- 扣减分钟数 -->
+    <result column="HOURS_JS" jdbcType="DECIMAL" property="hoursJs" />    <!-- 结算小时数 -->
+    <result column="MINS_JS" jdbcType="DECIMAL" property="minsJs" />    <!-- 结算分钟数 -->
+    <result column="DAYS_JS" jdbcType="DECIMAL" property="daysJs" />    <!-- 结算人天 -->
+    <result column="KQ_STATUS" jdbcType="VARCHAR" property="kqStatus" />    <!-- 考勤状态: N-不算 -->
+    <result column="KQ_MSG" jdbcType="VARCHAR" property="kqMsg" />    <!-- 考勤备注 -->
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />    <!-- 备用字段 -->
+    <result column="REMARK1" jdbcType="VARCHAR" property="remark1" />    <!-- 备用字段1 -->
+    <result column="REMARK2" jdbcType="VARCHAR" property="remark2" />    <!-- 备用字段2 -->
+  </resultMap>
+
+  <select id="selectByExample" parameterType="nohi.boot.kqjs.entity.QuarterJs" resultMap="BaseResultMap">
+    select
+        *
+    from CCB_QUARTER_JS
+    <where>
+      <if test="createdTs != null">
+        AND CREATED_TS = #{createdTs,jdbcType=TIMESTAMP}
+      </if>
+      <if test="project != null and project != '' ">
+        AND PROJECT = #{project,jdbcType=VARCHAR}
+      </if>
+      <if test="workDate != null">
+        AND WORK_DATE = #{workDate,jdbcType=DATE}
+      </if>
+      <if test="workDayStart != null">
+        <![CDATA[
+          AND WORK_DATE >= #{workDayStart}
+        ]]>
+      </if>
+      <if test="workDayEnd != null">
+        <![CDATA[
+          AND WORK_DATE <= #{workDayEnd}
+        ]]>
+      </if>
+      <if test="username != null and username != '' ">
+        AND USERNAME = #{username,jdbcType=VARCHAR}
+      </if>
+      <if test="startTime != null">
+        AND START_TIME = #{startTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endTime != null">
+        AND END_TIME = #{endTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="hours != null">
+        AND HOURS = #{hours,jdbcType=DECIMAL}
+      </if>
+      <if test="mins != null">
+        AND MINS = #{mins,jdbcType=DECIMAL}
+      </if>
+      <if test="deduction != null">
+        AND DEDUCTION = #{deduction,jdbcType=DECIMAL}
+      </if>
+      <if test="hoursJs != null">
+        AND HOURS_JS = #{hoursJs,jdbcType=DECIMAL}
+      </if>
+      <if test="minsJs != null">
+        AND MINS_JS = #{minsJs,jdbcType=DECIMAL}
+      </if>
+      <if test="daysJs != null">
+        AND DAYS_JS = #{daysJs,jdbcType=DECIMAL}
+      </if>
+      <if test="kqStatus != null and kqStatus != '' ">
+        AND KQ_STATUS = #{kqStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="kqMsg != null and kqMsg != '' ">
+        AND KQ_MSG = #{kqMsg,jdbcType=VARCHAR}
+      </if>
+      <if test="remark != null and remark != '' ">
+        AND REMARK = #{remark,jdbcType=VARCHAR}
+      </if>
+      <if test="remark1 != null and remark1 != '' ">
+        AND REMARK1 = #{remark1,jdbcType=VARCHAR}
+      </if>
+      <if test="remark2 != null and remark2 != '' ">
+        AND REMARK2 = #{remark2,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+</mapper>
