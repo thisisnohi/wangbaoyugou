@@ -1,8 +1,7 @@
 package nohi.boot.demo.utils;
 
 import com.github.pagehelper.PageInfo;
-import nohi.boot.demo.dto.Page;
-import nohi.boot.demo.entity.TeamUser;
+import nohi.boot.common.dto.page.Page;
 
 import java.util.List;
 

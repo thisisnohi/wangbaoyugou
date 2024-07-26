@@ -1,4 +1,4 @@
-package nohi.boot.demo.dto;
+package nohi.boot.common.dto.page;
 
 import lombok.Data;
 

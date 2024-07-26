@@ -16,6 +16,7 @@ import { initDict } from "./api/dicts";
 import { initIcon } from "./init";
 // @ts-ignore
 import print from 'vue3-print-nb';
+import numeral from 'numeral'
 
 // 试卷、试题
 import { shijuan } from "../mock/exam/shijuan";
@@ -34,7 +35,8 @@ getAuthRoutes().then(() => {
   app.use(store)
   app.use(router)
   app.use(i18n)
-  app.use(print);
+  app.use(print)
+  app.use(numeral)
   // app.config.performance = true
   app.mount('#app')
 

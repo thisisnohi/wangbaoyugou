@@ -21,15 +21,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @MapperScan("nohi.boot.*.dao")
 public class MyBatisPlusConfig {
-    /**
-     *	 分页插件
-     */
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
-        return interceptor;
-    }
+    // 不使用mybatisPlus分页插件
+//    /**
+//     *	 分页插件
+//     */
+//    @Bean
+//    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+//        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+//        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+//        return interceptor;
+//    }
 
 
 

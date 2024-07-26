@@ -12,9 +12,9 @@
     SELECT *
     FROM TEAM_USER
     <where>
-      <if test="id!=null and id!=''">
+     ` <if test="id!=null and id!=''">
         AND id = #{id}
-      </if>
+      </if>`
       <if test="name!=null and name!=''">
         AND name = #{name}
       </if>

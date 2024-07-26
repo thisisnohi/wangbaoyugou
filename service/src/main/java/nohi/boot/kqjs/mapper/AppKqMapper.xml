@@ -2,4 +2,81 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nohi.boot.kqjs.mapper.AppKqMapper">
 
+  <select id="monthDataCompare" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    <![CDATA[
+    select * from (
+      select DC.*
+         , case
+              when DC.缺卡状态 is not null then 1
+              when dc.上班分钟差 <= -5 or dc.下班分钟差 <= -5 then 1
+            else
+                0
+           end STATUS
+         , concat_ws("", Dc.缺卡状态
+           , case when dc.上班分钟差 <= -5 then concat('上班分钟差:',dc.上班分钟差)  end
+           , case when dc.下班分钟差 <= -5 then concat('下班分钟差:',dc.下班分钟差)   end
+          ) MSG
+      from VIEW_MONTH_DATE_COMPARE DC
+    ) RS
+    ]]>
+    <where>
+      <if test="username!=null and username!=''">
+        AND username in (${username})
+      </if>
+      <if test="startDate!=null and startDate!=''">
+        and work_date <![CDATA[ >=  ]]>  #{startDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+          and work_date <![CDATA[ <=  ]]> #{endDate}
+      </if>
+      <if test="status!=null and status!=''">
+        and status = #{status}
+      </if>
+    </where>
+    order by RS.username, RS.work_date
+  </select>
+
+  <select id="monthData" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select t.USERNAME
+          ${rsColsSql}
+    from (
+           select USERNAME, DATE_FORMAT(WORK_DATE,"%c") M
+                , count(1) 出勤天数, SUM(case when mins_js>400  then 1 when mins_js > 100 then 0.5 else 0 end) 考勤天数
+                ,     sum(mins_js) 结算分钟数, sum(DAYS_JS)  人天
+           from CCB_APP_KQ
+            where KQ_STATUS != 'N'
+              <if test="username!=null and username!=''">
+                AND username in (${username})
+              </if>
+              <if test="startDate!=null and startDate!=''">
+                and work_date <![CDATA[ >=  ]]>  #{startDate}
+              </if>
+              <if test="endDate!=null and endDate!=''">
+                and work_date <![CDATA[ <=  ]]> #{endDate}
+              </if>
+           group by USERNAME, DATE_FORMAT(WORK_DATE,"%c")
+         ) T
+    group by t.USERNAME
+    order by USERNAME
+  </select>
+
+  <!-- app考勤明细 -->
+  <select id="monthDataDetail" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select APP.*
+    , case when DAYS_JS>0  then 1  else 0 end 出勤天数
+    , case when mins_js>400  then 1 when mins_js > 100 then 0.5 else 0 end 考勤天数
+    from CCB_APP_KQ APP
+    <where>
+      <if test="username!=null and username!=''">
+        AND username in (${username})
+      </if>
+      <if test="startDate!=null and startDate!=''">
+        and work_date <![CDATA[ >=  ]]>  #{startDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+        and work_date <![CDATA[ <=  ]]> #{endDate}
+      </if>
+    </where>
+  </select>
+
 </mapper>

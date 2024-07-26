@@ -156,22 +156,15 @@
     <dependency>
       <groupId>com.github.pagehelper</groupId>
       <artifactId>pagehelper-spring-boot-starter</artifactId>
-      <version>1.2.9</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>jsqlparser</artifactId>
-          <groupId>com.github.jsqlparser</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>mybatis-spring</artifactId>
-          <groupId>org.mybatis</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>mybatis</artifactId>
-          <groupId>org.mybatis</groupId>
-        </exclusion>
-      </exclusions>
+      <version>1.4.6</version>
     </dependency>
+    <!-- pagehelper依赖 -->
+    <dependency>
+      <groupId>com.github.jsqlparser</groupId>
+      <artifactId>jsqlparser</artifactId>
+      <version>3.1</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
       <artifactId>httpclient5</artifactId>

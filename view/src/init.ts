@@ -7,7 +7,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 export function initIcon(app: any) {
   console.info('====initIcon=====')
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    console.info('regIcon:' + key)
+    //console.info('regIcon:' + key)
     app.component(key, component)
   }
 }

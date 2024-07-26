@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import nohi.boot.demo.config.MpConfig;
 import nohi.boot.demo.consts.DingTalkConsts;
 import nohi.boot.demo.consts.KaoQinConsts;
-import nohi.boot.demo.dto.Page;
+import nohi.boot.common.dto.page.Page;
 import nohi.boot.demo.dto.kaoqin.query.UserDutyTime;
 import nohi.boot.demo.dto.userInfo.UesrInfoQueryReq;
 import nohi.boot.demo.dto.userInfo.UserInfoQueryResp;

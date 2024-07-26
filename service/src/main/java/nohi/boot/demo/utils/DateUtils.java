@@ -204,7 +204,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         if (null == date) {
             return null;
         }
-        Instant instant = date.toInstant();
+        Instant instant = Instant.ofEpochMilli(date.getTime());
         ZoneId zone = ZoneId.systemDefault();
         return LocalDateTime.ofInstant(instant, zone);
     }
