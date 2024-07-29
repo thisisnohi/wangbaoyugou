@@ -6,7 +6,6 @@ const route: Route[] = [
   {
     path: '/ccbkq',
     component: Layout,
-    redirect: '/ccbkq/month_data',
     name: 'CcbKq',
     alwayShow: true,
     meta: {
@@ -61,7 +60,7 @@ const route: Route[] = [
       },
       {
         path: 'data_compare',
-        component: createNameComponent(() => import('@/views/ccbkq/monthData.vue')),
+        component: createNameComponent(() => import('@/views/ccbkq/dataCompare.vue')),
         name: 'data_compare',
         meta: {
           title: '月考勤结算考勤对比',

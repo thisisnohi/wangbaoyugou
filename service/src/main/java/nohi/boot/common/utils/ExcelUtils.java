@@ -2,6 +2,7 @@ package nohi.boot.common.utils;
 
 
 import lombok.extern.slf4j.Slf4j;
+import nohi.boot.common.utils.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
@@ -12,7 +13,11 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -296,13 +301,38 @@ public class ExcelUtils {
 
             Drawing drawing = row.getSheet().createDrawingPatriarch();
             Workbook workbook = row.getSheet().getWorkbook();
-            DataValidationHelper helper = row.getSheet().getDataValidationHelper();
 
             for (int i = 0; i < styleRow.getLastCellNum(); i++) {
                 copyCell(ExcelUtils.getCell(styleRow, i), ExcelUtils.getCell(row, i), drawing, workbook.getClass());
             }
         }
         return row;
+    }
+
+    /**
+     * 拷贝单元格样式
+     * @param fromCell 样式单元格
+     * @param toCell  需要设置的单元格
+     */
+    public static void copyCellStyle(Cell fromCell, Cell toCell) {
+        // 设置下拉框等验证信息
+        setValidatation(fromCell, toCell);
+
+        fromCell.getSheet().createDrawingPatriarch();
+        // 同一个excel可以直接复制cellStyle
+        if (fromCell.getSheet().getWorkbook() == toCell.getSheet().getWorkbook()) {
+            toCell.setCellStyle(fromCell.getCellStyle());
+        } else {
+            // 不同的excel之间，需要调用cloneStyleFrom方法
+            CellStyle newCellStyle = toCell.getSheet().getWorkbook().createCellStyle();
+            newCellStyle.cloneStyleFrom(fromCell.getCellStyle());
+            toCell.setCellStyle(newCellStyle);
+        }
+        copyCellValue(fromCell, toCell);
+        Comment fromComment = fromCell.getCellComment();
+        if (fromComment != null) {
+            copyComment(toCell.getSheet().getWorkbook().getClass(), fromComment, toCell.getSheet().getDrawingPatriarch(), fromCell, toCell);
+        }
     }
 
     public static void setValidatation(Cell fromCell, Cell toCell) {
@@ -493,6 +523,30 @@ public class ExcelUtils {
         } else {
             // 首字母;
             return rs + String.valueOf((char) ('A' + index));
+        }
+    }
+
+
+    /**
+     * 设置值
+     */
+    public static void setValue(Cell cell, Object rs) {
+        if (rs == null) {
+            cell.setCellValue("");
+            return;
+        }
+        if (rs instanceof BigDecimal) {
+            cell.setCellValue(((BigDecimal) rs).doubleValue());
+        } else if (rs instanceof Date) {
+            cell.setCellValue((Date) rs);
+        } else if (rs instanceof Timestamp) {
+            cell.setCellValue((Timestamp) rs);
+        } else if (rs instanceof LocalDateTime) {
+            cell.setCellValue(DateUtils.localDateTimeToDate((LocalDateTime) rs));
+        } else if (rs instanceof Integer) {
+            cell.setCellValue((Integer) rs);
+        } else {
+            cell.setCellValue(rs.toString());
         }
     }
 }

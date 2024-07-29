@@ -24,7 +24,7 @@ import nohi.boot.demo.service.DingTalkClientService;
 import nohi.boot.demo.service.KaoQinService;
 import nohi.boot.demo.service.db.TeamSignService;
 import nohi.boot.demo.service.db.TeamUserService;
-import nohi.boot.demo.utils.DateUtils;
+import nohi.boot.common.utils.DateUtils;
 import nohi.boot.demo.utils.PageUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;

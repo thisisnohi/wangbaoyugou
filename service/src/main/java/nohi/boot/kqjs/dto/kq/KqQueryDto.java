@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class KqQueryDto {
     private String username;
+    private String project;
     private String startDate;
     private String endDate;
     /**
@@ -24,4 +25,8 @@ public class KqQueryDto {
      * 查询结果列
      */
     private String rsColsSql;
+    /**
+     * 按项目统计？
+     */
+    private boolean byProject;
 }

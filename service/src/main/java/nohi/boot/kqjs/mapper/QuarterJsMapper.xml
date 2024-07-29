@@ -90,4 +90,87 @@
       </if>
     </where>
   </select>
+
+  <select id="monthData" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select t.USERNAME
+           ${rsColsSql}
+    from (
+        select USERNAME, DATE_FORMAT(WORK_DATE,"%c") M
+        , SUM(case when DAYS_JS>0  then 1  else 0 end)  出勤天数
+        , sum(DAYS_JS)  人天
+        from CCB_QUARTER_JS
+        <where>
+          <if test="username!=null and username!=''">
+            AND username in (${username})
+          </if>
+          <if test="startDate!=null and startDate!=''">
+            and work_date <![CDATA[ >=  ]]>  #{startDate}
+          </if>
+          <if test="endDate!=null and endDate!=''">
+            and work_date <![CDATA[ <=  ]]> #{endDate}
+          </if>
+        </where>
+        group by USERNAME, DATE_FORMAT(WORK_DATE,"%c")
+    ) T
+    group by t.USERNAME
+    order by USERNAME
+  </select>
+
+  <!-- 考勤明细 -->
+  <select id="monthDataDetail" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select APP.*
+      from CCB_QUARTER_JS APP
+    where DAYS_JS > 0
+      <if test="username!=null and username!=''">
+        AND username in (${username})
+      </if>
+      <if test="project!=null and project!=''">
+        AND project in (${project})
+      </if>
+      <if test="startDate!=null and startDate!=''">
+        and work_date <![CDATA[ >=  ]]>  #{startDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+        and work_date <![CDATA[ <=  ]]> #{endDate}
+      </if>
+  </select>
+
+  <!-- 判断人、工作日是否重复 -->
+  <select id="userWorkRepeat" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select USERNAME, WORK_DATE , count(1) COUNT, sum(DAYS_JS) SUM
+                   , group_concat(PROJECT) PROJECT
+    from CCB_QUARTER_JS
+    where DAYS_JS > 0
+    group by USERNAME, WORK_DATE having count(1) > 1
+  </select>
+
+  <!-- 结算考勤有，月份考勤无 -->
+  <select id="jsWithOutApp" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select USERNAME,WORK_DATE, DAYS_JS from CCB_QUARTER_JS
+    where DAYS_JS > 0
+      and (USERNAME,WORK_DATE) not in (
+      select USERNAME,WORK_DATE from CCB_APP_KQ where KQ_STATUS = 'Y' and DAYS_JS > 0
+    )
+    order by USERNAME, WORK_DATE
+  </select>
+
+  <!-- 月份考勤有，结算考勤无 -->
+  <select id="appWithOutJs" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select USERNAME,WORK_DATE, DAYS_JS
+    from CCB_APP_KQ where KQ_STATUS = 'Y' and DAYS_JS > 0
+                      and (USERNAME,WORK_DATE) not in (
+        select USERNAME,WORK_DATE from CCB_QUARTER_JS where  DAYS_JS > 0
+      )
+    order by USERNAME, WORK_DATE
+  </select>
+
+  <!-- 考勤不一致 -->
+  <select id="daysDiff" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select js.USERNAME, js.WORK_DATE, js.DAYS_JS , kq.DAYS_JS DAYS_KQ, Kq.START_TIME,kq.END_TIME,kq.MINS, kq.DEDUCTION,kq.MINS_JS
+    from CCB_QUARTER_JS JS LEFT JOIN CCB_APP_KQ KQ
+                                     on js.USERNAME = kq.USERNAME and js.WORK_DATE = kq.WORK_DATE
+    where js.DAYS_JS > 0 and kq.KQ_STATUS = 'Y' and kq.DAYS_JS > 0
+      and js.DAYS_JS != kq.DAYS_JS
+    order by js.USERNAME, js.WORK_DATE
+  </select>
 </mapper>

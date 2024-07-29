@@ -62,3 +62,5 @@ dingtalk:
 data:
   kqUrl: http://127.0.0.1:8099/fhkq-manager/AttendanceManager/myAttendance
   url: http://127.0.0.1:8099/fhkq-manager/AttendanceManager/myAttendance
+jskq:
+  filePath: ${HOME}/file

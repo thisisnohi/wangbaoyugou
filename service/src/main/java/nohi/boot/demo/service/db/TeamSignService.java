@@ -9,7 +9,7 @@ import nohi.boot.demo.dto.kaoqin.query.UserDutyTime;
 import nohi.boot.demo.dto.query.TeamUserSignInfo;
 import nohi.boot.demo.entity.TeamSign;
 import nohi.boot.demo.entity.TeamUser;
-import nohi.boot.demo.utils.DateUtils;
+import nohi.boot.common.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;

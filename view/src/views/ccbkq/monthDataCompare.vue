@@ -34,8 +34,13 @@
           :icon="Search"
           class="search-btn"
           @click="getTableData(true)"
-          >{{ $t("message.common.search") }}</el-button
-        >
+          >{{ $t("message.common.search") }}</el-button>
+
+        <el-button
+          type="success"
+          :icon="Download"
+          @click="exportTableData()"
+          >导出</el-button>
       </div>
     </div>
     <div class="layout-container-table">
@@ -44,7 +49,6 @@
         v-model:page="page"
         v-loading="loading"
         :showIndex="true"
-        :showSelection="true"
         :data="tableData"
         :row-class-name="tableRowClassName"
         @getTableData="getTableData"
@@ -90,10 +94,10 @@
 import { defineComponent, ref, provide, reactive, inject, watch } from "vue";
 import Table from "@/components/table/index.vue";
 import { Page } from "@/components/table/type";
-import { getMonthDataCompare } from "@/api/ccbkq/monthData";
+import { getMonthDataCompare, exportMonthDataCompareApi } from "@/api/ccbkq/monthData";
 import { ElMessage } from "element-plus";
 import type { LayerInterface } from "@/components/layer/index.vue";
-import { Plus, Search, Delete } from "@element-plus/icons";
+import { Plus, Search, Delete, Download } from "@element-plus/icons";
 import dayjs from 'dayjs';
 import numeral from 'numeral';
 
@@ -194,6 +198,32 @@ export default defineComponent({
           loading.value = false;
         });
     };
+
+    // 导出
+    const exportTableData = () => {
+      console.info("===> exportTableData");
+      loading.value = true;
+
+      query.startDate = ''
+      query.endDate = ''
+      if (query.dateRange && query.dateRange.length >= 2) {
+        query.startDate = query.dateRange[0]
+        query.endDate = query.dateRange[1]
+      }
+
+      exportMonthDataCompareApi(query)
+        .then((res) => {
+          console.info('下载完成')
+        })
+        .catch((error) => {
+          console.error("===>", error);
+        })
+        .finally(() => {
+          console.info("===>finally");
+          loading.value = false;
+        });
+    };
+
     const tableRowClassName = ({row, rowIndex}) => { //改变某行的背景色
       console.info("ROW ", rowIndex)
       if (row.STATUS === 1) {
@@ -211,6 +241,7 @@ export default defineComponent({
       Plus,
       Search,
       Delete,
+      Download,
       query,
       statusOptions,
       tableData,
@@ -220,6 +251,7 @@ export default defineComponent({
       layer,
       handleSelectionChange,
       getTableData,
+      exportTableData,
       dayjs,
       numeral,
       tableRowClassName,

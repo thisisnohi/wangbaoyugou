@@ -8,7 +8,7 @@ import nohi.boot.demo.dto.kaoqin.KaoQinRespDataRecord;
 import nohi.boot.demo.entity.TeamSign;
 import nohi.boot.demo.entity.TeamUser;
 import nohi.boot.demo.service.db.TeamSignService;
-import nohi.boot.demo.utils.DateUtils;
+import nohi.boot.common.utils.DateUtils;
 import nohi.boot.demo.utils.OkHttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

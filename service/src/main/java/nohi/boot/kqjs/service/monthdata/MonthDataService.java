@@ -9,16 +9,24 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import nohi.boot.common.dto.RespMeta;
 import nohi.boot.common.dto.page.Page;
-import nohi.boot.demo.utils.DateUtils;
+import nohi.boot.common.utils.ExcelUtils;
+import nohi.boot.common.utils.DateUtils;
 import nohi.boot.demo.utils.PageUtils;
+import nohi.boot.kqjs.config.JsKqConfig;
 import nohi.boot.kqjs.dto.kq.KqQueryDto;
 import nohi.boot.kqjs.dto.kq.MonthData;
 import nohi.boot.kqjs.mapper.AppKqMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -38,6 +46,8 @@ public class MonthDataService {
 
     @Autowired
     private AppKqMapper mapper;
+    @Autowired
+    private JsKqConfig jsKqConfig;
 
     public static final String MONTH_DAY = "M/d";
 
@@ -66,6 +76,74 @@ public class MonthDataService {
             resp.setData(list);
         }
         return resp;
+    }
+
+    /**
+     * 大楼门禁、移动APP数据对比
+     *
+     * @param info 查询对象
+     */
+    public RespMeta<String> exportMonthDataCompare(KqQueryDto info) {
+        // 查询数据
+        List<Map<String, Object>> list = (List<Map<String, Object>>) this.monthDataCompare(info, null).getData();
+
+        String filename = DateUtils.getNow().getTime() + ".xlsx";
+        String template = "templates/monthDataCompare.xlsx";
+        String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
+        RespMeta<String> respMeta = new RespMeta();
+        respMeta.setData(outputFile);
+        // 2,读取Excel模板
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
+             FileOutputStream fos = new FileOutputStream(outputFile);
+        ) {
+            // 读取Excel模板
+            Workbook templatebook = WorkbookFactory.create(is);
+            Sheet templateSheet = templatebook.getSheetAt(0);
+
+            // title 不需要处理
+
+            // 导出数据
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> item = list.get(i);
+                // excel第二行，start with 0
+                Row row = templateSheet.getRow(i + 1);
+                if (null == row) {
+                    row = templateSheet.createRow(i + 1);
+                }
+
+                // 大于第一行时拷贝样式
+                if (i > 0) {
+                    ExcelUtils.setRowStyle(ExcelUtils.getRow(templateSheet, 1), row);
+                }
+
+                ExcelUtils.setValue(row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("username"));
+                ExcelUtils.setValue(row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("work_date"));
+                ExcelUtils.setValue(row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("大楼上班"));
+                ExcelUtils.setValue(row.getCell(3, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("大楼下班"));
+                ExcelUtils.setValue(row.getCell(4, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("大楼时差"));
+                ExcelUtils.setValue(row.getCell(5, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("移动上班"));
+                ExcelUtils.setValue(row.getCell(6, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("移动下班"));
+                ExcelUtils.setValue(row.getCell(7, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("移动时差"));
+                ExcelUtils.setValue(row.getCell(8, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), null == item.get("上班分钟差") ? "" : new BigDecimal(String.valueOf(item.get("上班分钟差"))));
+                ExcelUtils.setValue(row.getCell(9, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), null == item.get("下班分钟差") ? "" : new BigDecimal(String.valueOf(item.get("下班分钟差"))));
+                ExcelUtils.setValue(row.getCell(10, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("DEDUCTION"));
+                ExcelUtils.setValue(row.getCell(11, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("MINS_JS"));
+                ExcelUtils.setValue(row.getCell(12, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("DAYS_JS"));
+                ExcelUtils.setValue(row.getCell(13, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("MSG"));
+
+                templateSheet.setForceFormulaRecalculation(true);
+            }
+
+            // 生成文件
+            templatebook.write(fos);
+        } catch (Exception e) {
+            log.error("导出文件异常:{}", e.getMessage(), e);
+
+            respMeta.setResCode("1");
+            respMeta.setResMsg("导出文件异常:" + e.getMessage());
+        }
+
+        return respMeta;
     }
 
     private Map<String, Object> columnMap(String value, String lable) {
@@ -141,7 +219,7 @@ public class MonthDataService {
             sb.append(String.format(", max(case when T.m = '%s' then T.结算分钟数 else null end) as '%s'", mon, mon + "月结算分钟"));
         }
         // 结算人天
-        map = this.columnMap("", "结算分结算人天钟数");
+        map = this.columnMap("", "结算人天");
         columnList.add(map);
         map.put("isLeaf", "N");
         itemList = Lists.newArrayList();
@@ -174,9 +252,139 @@ public class MonthDataService {
         return resp;
     }
 
+    /**
+     * 导出月考勤数据
+     *
+     * @param info 查询对象
+     */
+    public RespMeta<String> exportMonthData(KqQueryDto info) {
+        /** 查询数据 **/
+        RespMeta<MonthData> respMeta = this.monthData(info, null);
+
+        /** 导出 **/
+        String filename = DateUtils.getNow().getTime() + ".xlsx";
+        String template = "templates/monthData.xlsx";
+        String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
+        RespMeta<String> exportRespMeta = new RespMeta();
+        exportRespMeta.setData(outputFile);
+
+        // 2,读取Excel模板
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
+             FileOutputStream fos = new FileOutputStream(outputFile);
+        ) {
+            // 读取Excel模板
+            Workbook templatebook = WorkbookFactory.create(is);
+            Sheet templateSheet = templatebook.getSheetAt(0);
+
+            //  表头处理
+            /** 表头 **/
+            // 需要处理合并单元格问题
+            List<Map<String, Object>> columnList = (List<Map<String, Object>>) respMeta.getData().getColumnList();
+            // excel列表属性及属性对应值
+            List<Map<String, Object>> excelColItemList = Lists.newArrayList();
+
+            Row firstRow = templateSheet.getRow(0);
+            if (null == firstRow) {
+                firstRow = templateSheet.createRow(0);
+            }
+
+            Row secondRow = templateSheet.getRow(1);
+            if (null == secondRow) {
+                secondRow = templateSheet.createRow(1);
+            }
+
+            // 按列表获取列头key
+            for (Map<String, Object> columnItem : columnList) {
+                // 叶子节点直接添加
+                if ("Y".equalsIgnoreCase((String) columnItem.get("isLeaf"))) {
+                    // 合并单元格
+                    log.info("表头个数:[{}] 合并单元格:[{} {} {} {}]", excelColItemList.size(), 0, 1, excelColItemList.size(), excelColItemList.size());
+                    CellRangeAddress region = new CellRangeAddress(0, 1, excelColItemList.size(), excelColItemList.size());
+                    templateSheet.addMergedRegion(region);
+
+                    log.info("第一行表头:[{}]:{}", excelColItemList.size(), columnItem.get("label"));
+                    Cell thisCell = firstRow.getCell(excelColItemList.size(), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    // 第一列不需要拷贝
+                    if (!excelColItemList.isEmpty()) {
+                        ExcelUtils.copyCellStyle(firstRow.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), thisCell);
+                    }
+                    ExcelUtils.setValue(thisCell, columnItem.get("label"));
+                    excelColItemList.add(columnItem);
+                } else {
+                    // 子列表
+                    List<Map<String, Object>> subList = (List<Map<String, Object>>) columnItem.get("subList");
+                    if (subList.size() > 1) {
+                        // 合并单元格：合并第一行
+                        CellRangeAddress region = new CellRangeAddress(0, 0, excelColItemList.size(), excelColItemList.size() + subList.size() - 1);
+                        templateSheet.addMergedRegion(region);
+                    }
+                    // 第一行单元格表头
+                    log.info("第一行表头:[{}]:{}", excelColItemList.size(), columnItem.get("label"));
+                    Cell thisCell = firstRow.getCell(excelColItemList.size(), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    // 第一列不需要拷贝
+                    if (!excelColItemList.isEmpty()) {
+                        ExcelUtils.copyCellStyle(firstRow.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), thisCell);
+                    }
+                    ExcelUtils.setValue(thisCell, columnItem.get("label"));
+
+                    for (Map<String, Object> subColumnItem : subList) {
+                        // 第二行单元格表头
+                        log.info("第二行表头:[{}]:{}", excelColItemList.size(), subColumnItem.get("label"));
+                        thisCell = secondRow.getCell(excelColItemList.size(), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        // 第一列不需要拷贝
+                        if (!excelColItemList.isEmpty()) {
+                            ExcelUtils.copyCellStyle(firstRow.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), thisCell);
+                        }
+
+                        ExcelUtils.setValue(thisCell, subColumnItem.get("label"));
+                        excelColItemList.add(subColumnItem);
+                    }
+                }
+            }
+
+            log.info("表头:{}", JSONObject.toJSONString(excelColItemList));
+
+            // 导出数据
+            List<Map<String, Object>> list = (List<Map<String, Object>>) respMeta.getData().getDataList();
+
+            // 行偏移量：偏移表头
+            int rowOffSet = 2;
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> dataItem = list.get(i);
+                // excel第二行，start with 0
+                // 行索引，前两行表表头，所以需要 + rowOffSet
+                int rowIndex = i + rowOffSet;
+                Row row = templateSheet.getRow(rowIndex);
+                if (null == row) {
+                    row = templateSheet.createRow(rowIndex);
+                }
+
+                // 大于第一行时拷贝样式
+//                if (i > 0) {
+//                    ExcelUtils.setRowStyle(ExcelUtils.getRow(templateSheet, rowOffSet), row);
+//                }
+                for (int colIndex = 0; colIndex < excelColItemList.size(); colIndex++) {
+                    Map<String, Object> colTitleItem = excelColItemList.get(colIndex);
+                    String value = (String) colTitleItem.get("value");
+                    ExcelUtils.setValue(row.getCell(colIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), dataItem.get(value));
+                }
+
+                templateSheet.setForceFormulaRecalculation(true);
+            }
+
+            // 生成文件
+            templatebook.write(fos);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            exportRespMeta.setResCode("1");
+            exportRespMeta.setResMsg("导出文件异常:" + e.getMessage());
+        }
+
+        return exportRespMeta;
+    }
 
     /**
-     * 月考勤数据
+     * 月考勤数据明细
      *
      * @param info 查询对象
      * @return 结果
@@ -213,16 +421,102 @@ public class MonthDataService {
         return resp;
     }
 
-    private List<Map<String,?>> convertData(List<Map<String,?>> allDataList) {
-        Map<String, Map<String,Object>> allUserData = Maps.newHashMap();
+    /**
+     * 月考勤数据明细
+     *
+     * @param info 查询对象
+     * @return 结果
+     */
+    public RespMeta<String> exportMonthDataDetail(KqQueryDto info) {
+        /** 查询数据 **/
+        RespMeta<MonthData> respMeta = this.monthDataDetail(info);
+
+        /** 导出 **/
+        String filename = DateUtils.getNow().getTime() + ".xlsx";
+        String template = "templates/monthDataDetail.xlsx";
+        String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
+        RespMeta<String> exportRespMeta = new RespMeta();
+        exportRespMeta.setData(outputFile);
+
+
+        // 2,读取Excel模板
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
+             FileOutputStream fos = new FileOutputStream(outputFile);
+        ) {
+            // 读取Excel模板
+            Workbook templatebook = WorkbookFactory.create(is);
+            Sheet templateSheet = templatebook.getSheetAt(0);
+
+            // 需要处理合并单元格问题
+            List<Map<String, Object>> columnList = (List<Map<String, Object>>) respMeta.getData().getColumnList();
+            Row firstRow = templateSheet.getRow(0);
+            if (null == firstRow) {
+                firstRow = templateSheet.createRow(0);
+            }
+            log.info("表头:{}", JSONObject.toJSONString(columnList));
+
+            /** 表头 **/
+            // 按列表获取列头key
+            int cellIndex = 0;
+            for (Map<String, Object> columnItem : columnList) {
+                Cell cell = firstRow.getCell(cellIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                if (cellIndex > 1) {
+                    // 拷贝样式
+                    cell.setCellStyle(firstRow.getCell(1).getCellStyle());
+                    templateSheet.setColumnWidth(cellIndex, templateSheet.getColumnWidth(1));
+                }
+                ExcelUtils.setValue(cell, columnItem.get("label"));
+                cellIndex++;
+            }
+
+            // 导出数据
+            List<Map<String, Object>> list = (List<Map<String, Object>>) respMeta.getData().getDataList();
+
+            // 行偏移量：偏移表头
+            int rowOffSet = 1;
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> dataItem = list.get(i);
+                // excel第二行，start with 0
+                // 行索引，前两行表表头，所以需要 + rowOffSet
+                int rowIndex = i + rowOffSet;
+                Row row = templateSheet.getRow(rowIndex);
+                if (null == row) {
+                    row = templateSheet.createRow(rowIndex);
+                }
+
+                // 大于第一行时拷贝样式
+//                if (i > 0) {
+//                    ExcelUtils.setRowStyle(ExcelUtils.getRow(templateSheet, rowOffSet), row);
+//                }
+                for (int colIndex = 0; colIndex < columnList.size(); colIndex++) {
+                    Map<String, Object> colTitleItem = columnList.get(colIndex);
+                    String value = (String) colTitleItem.get("value");
+                    ExcelUtils.setValue(row.getCell(colIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), dataItem.get(value));
+                }
+
+                templateSheet.setForceFormulaRecalculation(true);
+            }
+
+            // 生成文件
+            templatebook.write(fos);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            exportRespMeta.setResCode("1");
+            exportRespMeta.setResMsg("导出文件异常:" + e.getMessage());
+        }
+        return exportRespMeta;
+    }
+
+    private List<Map<String, ?>> convertData(List<Map<String, ?>> allDataList) {
+        Map<String, Map<String, Object>> allUserData = Maps.newHashMap();
 
         for (Map<String, ?> dateItem : allDataList) {
             String userName = (String) dateItem.get("USERNAME");
-            Map<String,Object> userData = allUserData.getOrDefault(userName, Maps.newHashMap());
+            Map<String, Object> userData = allUserData.getOrDefault(userName, Maps.newHashMap());
             allUserData.put(userName, userData);
 
             // 存放表一天
-            LocalDate date =  DateUtils.date2LocalDate((Date) dateItem.get("WORK_DATE"));
+            LocalDate date = DateUtils.date2LocalDate((Date) dateItem.get("WORK_DATE"));
             BigDecimal daysJs = (BigDecimal) dateItem.get("DAYS_JS");
             BigDecimal total = (BigDecimal) userData.getOrDefault("TOTAL", BigDecimal.ZERO);
             total = total.add(daysJs);
@@ -234,7 +528,7 @@ public class MonthDataService {
             userData.put(DateUtils.localDateFormat(date, MONTH_DAY), daysJs);
         }
 
-        List<Map<String,?>> rsList = Lists.newArrayList();
+        List<Map<String, ?>> rsList = Lists.newArrayList();
         allUserData.entrySet().stream().sorted((a, b) -> a.getKey().compareTo(b.getKey())).forEach(item -> {
             rsList.add(item.getValue());
         });
@@ -252,7 +546,7 @@ public class MonthDataService {
         List<Map<String, ?>> columnList = Lists.newArrayList();
         for (; !start.isAfter(end); ) {
             String date = DateUtils.localDateFormat(start, MONTH_DAY);
-            Map<String, Object>  map = this.columnMap(date, date);
+            Map<String, Object> map = this.columnMap(date, date);
             if (start.getDayOfWeek().getValue() > 5) {
                 map.put("TABLE_HEAD_CSS", "WEEKEND");
             }

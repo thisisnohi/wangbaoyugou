@@ -25,7 +25,7 @@
           class="search-btn"
           @click="getTableData(true)"
           >{{ $t("message.common.search") }}</el-button>
-          <el-button
+        <el-button
             type="success"
             :icon="Download"
             @click="exportTableData()"
@@ -68,10 +68,10 @@
 import { defineComponent, ref, provide, reactive, inject, watch } from "vue";
 import Table from "@/components/table/index.vue";
 import { Page } from "@/components/table/type";
-import { monthData, exportMonthDataApi } from "@/api/ccbkq/monthData";
+import { jsMonthData, exportJsMonthDataApi } from "@/api/ccbkq/monthData";
 import { ElMessage } from "element-plus";
 import type { LayerInterface } from "@/components/layer/index.vue";
-import { Plus, Search, Delete } from "@element-plus/icons";
+import { Plus, Search, Delete, Download } from "@element-plus/icons";
 import dayjs from "dayjs";
 import numeral from "numeral";
 
@@ -125,7 +125,7 @@ export default defineComponent({
       // console.info('monthStart:' + monthStart + ',monthDiff:' + monthDiff)
 
       loading.value = true;
-      monthData(query)
+      jsMonthData(query)
         .then((res) => {
           console.info(res)
           tableData.value = res.data.dataList;
@@ -153,7 +153,7 @@ export default defineComponent({
         query.endDate = query.dateRange[1]
       }
 
-      exportMonthDataApi(query)
+      exportJsMonthDataApi(query)
         .then((res) => {
           console.info('下载完成')
         })
@@ -165,7 +165,7 @@ export default defineComponent({
           loading.value = false;
         });
     };
-    
+
     const tableRowClassName = ({ row, rowIndex }) => {
       //改变某行的背景色
       console.info("ROW ", rowIndex);
@@ -179,6 +179,7 @@ export default defineComponent({
       Plus,
       Search,
       Delete,
+      Download,
       query,
       tableColumnList,
       tableData,

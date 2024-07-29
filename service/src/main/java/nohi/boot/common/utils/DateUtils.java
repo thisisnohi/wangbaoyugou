@@ -201,6 +201,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 *
 	 */
 	public static LocalDate date2LocalDate(Date date) {
+		if (date instanceof java.sql.Date) {
+			return ((java.sql.Date) date).toLocalDate();
+		}
 		return date2LocalDateTime(date).toLocalDate();
 	}
 	/**
@@ -248,6 +251,14 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	}
 
 	public static String localDateFormat(LocalDate localDate, String pattern) {
+		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern(null == pattern ? HYPHEN_DATE : pattern);
+		if (null != localDate) {
+			return localDate.format(dateformat);
+		}
+		return null;
+	}
+
+	public static String localDateTimeFormat(LocalDateTime localDate, String pattern) {
 		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern(null == pattern ? HYPHEN_DATE : pattern);
 		if (null != localDate) {
 			return localDate.format(dateformat);

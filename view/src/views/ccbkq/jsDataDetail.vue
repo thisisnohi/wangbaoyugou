@@ -9,7 +9,13 @@
           placeholder="姓名,多个以,分隔"
           @change="getTableData(true)"
         ></el-input>
-
+        <el-input
+          style="width: 230px"
+          v-model="query.project"
+          placeholder="项目名称,多个以','分隔"
+          @change="getTableData(true)"
+        ></el-input>
+        
         <el-date-picker
           style="width: 230px"
           v-model="query.dateRange"
@@ -19,17 +25,30 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         />
+
+        <el-switch
+          v-model="query.byProject"
+          class="ml-2"
+          width="100"
+          inline-prompt
+          active-text="按项目统计"
+          inactive-text="按人统计"
+        />
+
         <el-button
           type="primary"
           :icon="Search"
           class="search-btn"
           @click="getTableData(true)"
-          >{{ $t("message.common.search") }}</el-button>
-          <el-button
+          >{{ $t("message.common.search") }}</el-button
+        >
+        
+        <el-button
             type="success"
             :icon="Download"
             @click="exportTableData()"
             >导出</el-button>
+
       </div>
     </div>
     <div class="layout-container-table">
@@ -45,19 +64,26 @@
       >
         <el-table-column
           v-for="(item,index) in tableColumnList"
+          :label-class-name="item.TABLE_HEAD_CSS"
+          :class-name="item.TABLE_HEAD_CSS"
           :key="index"
           :prop="item.value"
           :label="item.label"
           align="center"
         >
-          <el-table-column
-            v-if="item.isLeaf !== 'Y'"
-            v-for="(subItem, subIndex) in item.subList"
-            :key="subItem"
-            :prop="subItem.value"
-            :label="subItem.label"
-            align="center"
-          />
+          <template #default="{ row }">
+              <el-tooltip class="item" effect="dark" placement="top"> 
+                <template v-slot:content>
+                  <div>姓名: {{ showItemTips(row[item.value + '_INFO'], 'USERNAME') }} </div>
+                  <div>日期: {{ showItemTips(row[item.value + '_INFO'], 'WORK_DATE') }} </div>
+                  <div>结算人天: {{ showItemTips(row[item.value + '_INFO'], 'DAYS_JS') }}</div>
+                  <div>考勤状态: {{ showItemTips(row[item.value + '_INFO'], 'KQ_STATUS') }}</div>
+                  <div>备注: {{ showItemTips(row[item.value + '_INFO'], 'KQ_MSG') }} </div>
+                </template>
+                <span v-if="row[item.value + '_STATUS'] !=='N'" >{{ row[item.value] }}</span>
+                <span v-else class="error">{{ row[item.value] }}</span>
+              </el-tooltip>
+          </template>
         </el-table-column>
       </Table>
     </div>
@@ -68,7 +94,7 @@
 import { defineComponent, ref, provide, reactive, inject, watch } from "vue";
 import Table from "@/components/table/index.vue";
 import { Page } from "@/components/table/type";
-import { monthData, exportMonthDataApi } from "@/api/ccbkq/monthData";
+import { jsMonthDataDetail, exportJsMonthDataDetailApi } from "@/api/ccbkq/monthData";
 import { ElMessage } from "element-plus";
 import type { LayerInterface } from "@/components/layer/index.vue";
 import { Plus, Search, Delete } from "@element-plus/icons";
@@ -87,8 +113,11 @@ export default defineComponent({
     // 存储搜索用的数据
     const query = reactive({
       username: "",
+      project: "",
       dateRange: [dayjs().subtract(3, 'month').set('date', 1).format('YYYY-MM-DD'), dayjs().set('date', 1).subtract(1, 'day').format('YYYY-MM-DD')],
       status: "",
+       // 是否显示项目
+       byProject: true,
       startDate: "",
       endDate: "",
     });
@@ -125,7 +154,7 @@ export default defineComponent({
       // console.info('monthStart:' + monthStart + ',monthDiff:' + monthDiff)
 
       loading.value = true;
-      monthData(query)
+      jsMonthDataDetail(query)
         .then((res) => {
           console.info(res)
           tableData.value = res.data.dataList;
@@ -153,7 +182,7 @@ export default defineComponent({
         query.endDate = query.dateRange[1]
       }
 
-      exportMonthDataApi(query)
+      exportJsMonthDataDetailApi(query)
         .then((res) => {
           console.info('下载完成')
         })
@@ -165,7 +194,8 @@ export default defineComponent({
           loading.value = false;
         });
     };
-    
+
+
     const tableRowClassName = ({ row, rowIndex }) => {
       //改变某行的背景色
       console.info("ROW ", rowIndex);
@@ -173,6 +203,25 @@ export default defineComponent({
         console.info("ROW ", rowIndex, " 异常");
         return "error";
       }
+    };
+
+    // Tips展示
+    const showItemTips = (item: any, name:string) => {
+      if (name) {
+        const rs = item[name]
+        if (rs) {
+          return rs
+        }
+        return '';
+      }
+      let tips = `
+      <div>姓名:${item.USERNAME} 日期: ${item.WORK_DATE} <br></div>
+      <div>上下班时间：[${item.START_TIME} - ${item.END_TIME}] <br></div>
+      上班分钟: [${item.MINS}] 扣减分钟:[${item.DEDUCTION}] <br>
+      结算分钟: [${item.MINS_JS}] 结算人天: [${item.DAYS_JS}]<br>
+      考勤状态: [${item.KQ_STATUS}] 备注: [${item.KQ_MSG}]<br>
+      `;
+      return tips
     };
 
     return {
@@ -190,6 +239,7 @@ export default defineComponent({
       exportTableData,
       dayjs,
       numeral,
+      showItemTips,
       tableRowClassName,
     };
   },
@@ -204,5 +254,13 @@ export default defineComponent({
 }
 .el-table tr.error {
   background: #f5a623;
+}
+.el-table thead th.WEEKEND, .el-table tbody tr td.WEEKEND,
+.el-table--enable-row-hover .el-table__body tr:hover>td.WEEKEND
+{
+  background: #f5a623;
+}
+span.error{
+  color: red;
 }
 </style>
