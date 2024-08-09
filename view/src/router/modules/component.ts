@@ -15,6 +15,29 @@ const route: Route[] = [
         meta: { title: 'message.menu.component.button' },
       },
       {
+        path: 'office',
+        component: createNameComponent(() => import('@/views/office/view/index.vue')),
+        redirect: '/component/office/pptx',
+        meta: { title: '文件预览' },
+        children: [
+          {
+            path: 'pptx',
+            component: createNameComponent(() => import('@/views/office/view/pptx.vue')),
+            meta: { title: 'pptx' },
+          },
+          {
+            path: 'word',
+            component: createNameComponent(() => import('@/views/office/view/word.vue')),
+            meta: { title: 'word' },
+          },
+          {
+            path: 'excel',
+            component: createNameComponent(() => import('@/views/office/view/excel.vue')),
+            meta: { title: 'excel' },
+          },
+        ]
+      },
+      {
         path: 'wordEditor',
         component: createNameComponent(() => import('@/views/main/components/wordEditor/index.vue')),
         meta: { title: 'message.menu.component.wordEditor' },

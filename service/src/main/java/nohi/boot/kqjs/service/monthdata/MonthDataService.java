@@ -92,6 +92,7 @@ public class MonthDataService {
         String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
         RespMeta<String> respMeta = new RespMeta();
         respMeta.setData(outputFile);
+        log.info("生成文件:{}", outputFile);
         // 2,读取Excel模板
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
              FileOutputStream fos = new FileOutputStream(outputFile);
@@ -267,7 +268,7 @@ public class MonthDataService {
         String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
         RespMeta<String> exportRespMeta = new RespMeta();
         exportRespMeta.setData(outputFile);
-
+        log.info("生成文件:{}", outputFile);
         // 2,读取Excel模板
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
              FileOutputStream fos = new FileOutputStream(outputFile);
@@ -437,7 +438,7 @@ public class MonthDataService {
         String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
         RespMeta<String> exportRespMeta = new RespMeta();
         exportRespMeta.setData(outputFile);
-
+        log.info("生成文件:{}", outputFile);
 
         // 2,读取Excel模板
         try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
