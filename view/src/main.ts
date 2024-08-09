@@ -17,7 +17,6 @@ import { initIcon } from "./init";
 // @ts-ignore
 import print from 'vue3-print-nb';
 import numeral from 'numeral'
-
 // 试卷、试题
 import { shijuan } from "../mock/exam/shijuan";
 import { shiti } from "../mock/exam/shiti";

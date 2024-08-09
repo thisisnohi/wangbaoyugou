@@ -1,25 +1,39 @@
 <template>
   <div class="layout-container">
     <div class="layout-container-form">
-      <iframe
-          src='https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwaibaoyugou.com%2Foffice%2F20240809.docx'
-          width='1000px' height='800px' frameborder='1'>
-      </iframe>
+      <vue-office-excel
+          :src="docx"
+          style="height: 100vh;width: 100%"
+          @rendered="rendered"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+//引入VueOfficeDocx组件
+import VueOfficeExcel from '@vue-office/excel'
+//引入相关样式
+import '@vue-office/docx/lib/index.css'
 
 export default defineComponent({
   name: "officeView",
-  components: {},
-
+  components: {
+    VueOfficeExcel
+  },
   setup() {
     const loading = ref(false);
+    const docx = ref('')
+    docx.value = 'http://127.0.0.1:81/Downloads/20240809.xlsx'
+    const rendered = () => {
+      console.log("渲染完成")
+    };
+
     return {
       loading,
+      docx,
+      rendered,
     };
   },
 });

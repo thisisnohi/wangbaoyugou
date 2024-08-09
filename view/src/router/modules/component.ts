@@ -18,7 +18,7 @@ const route: Route[] = [
         path: 'office',
         component: createNameComponent(() => import('@/views/office/view/index.vue')),
         redirect: '/component/office/pptx',
-        meta: { title: '文件预览' },
+        meta: { title: 'office文件预览' },
         children: [
           {
             path: 'pptx',
@@ -37,6 +37,48 @@ const route: Route[] = [
           },
         ]
       },
+      {
+        path: 'vue-office',
+        component: createNameComponent(() => import('@/views/office/view/index.vue')),
+        redirect: '/component/vue-office/word',
+        meta: { title: 'vue-office' },
+        children: [
+          {
+            path: 'word',
+            component: createNameComponent(() => import('@/views/office/viewOffice/word.vue')),
+            meta: { title: 'word' },
+          },
+          {
+            path: 'excel',
+            component: createNameComponent(() => import('@/views/office/viewOffice/excel.vue')),
+            meta: { title: 'excel' },
+          },
+          {
+            path: 'viewOfficePdf',
+            component: createNameComponent(() => import('@/views/office/viewOffice/pdf.vue')),
+            meta: { title: 'viewOfficePdf' },
+          },
+        ]
+      },
+      {
+        path: 'pdf',
+        component: createNameComponent(() => import('@/views/office/view/index.vue')),
+        redirect: '/component/pdf/vue-pdf',
+        meta: { title: 'pdf' },
+        children: [
+          {
+            path: 'vue-pdf',
+            component: createNameComponent(() => import('@/views/office/pdf/vue-pdf.vue')),
+            meta: { title: 'vue-pdf' },
+          },
+          {
+            path: 'viewOfficePdf',
+            component: createNameComponent(() => import('@/views/office/viewOffice/pdf.vue')),
+            meta: { title: 'viewOfficePdf' },
+          },
+        ]
+      },
+
       {
         path: 'wordEditor',
         component: createNameComponent(() => import('@/views/main/components/wordEditor/index.vue')),

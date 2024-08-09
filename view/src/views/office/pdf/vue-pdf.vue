@@ -1,25 +1,37 @@
 <template>
   <div class="layout-container">
     <div class="layout-container-form">
-      <iframe
-          src='https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwaibaoyugou.com%2Foffice%2F20240809.docx'
-          width='1000px' height='800px' frameborder='1'>
-      </iframe>
+      <PDF
+          :src="docx"
+          password="1"
+          style="height: 100vh;width: 100%"
+          @rendered="rendered"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import PDF from "pdf-vue3";
 
 export default defineComponent({
   name: "officeView",
-  components: {},
-
+  components: {
+    PDF
+  },
   setup() {
     const loading = ref(false);
+    const docx = ref('')
+    docx.value = 'http://106.15.194.231/office/20240809-withpasswod1.pdf'
+    const rendered = () => {
+      console.log("渲染完成")
+    };
+
     return {
       loading,
+      docx,
+      rendered,
     };
   },
 });
