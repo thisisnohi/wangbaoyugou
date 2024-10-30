@@ -25,7 +25,7 @@ export default defineComponent({
   setup() {
     const loading = ref(false);
     const docx = ref('')
-    docx.value = 'http://127.0.0.1:81/Downloads/20240809.docx'
+    docx.value = 'http://106.15.194.231/office/20240809.docx'
     const rendered = () => {
       console.log("渲染完成")
     };

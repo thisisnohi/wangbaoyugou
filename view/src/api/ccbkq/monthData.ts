@@ -77,6 +77,16 @@ export function exportJsMonthDataApi(data: object) {
   })
 }
 
+// 导出项目结算月考勤数据汇总
+export function exportProjectJsMonthDataApi(data: object) {
+  return requestTx({
+    url: '/quarterJs/exportProjectMonthData',
+    method: 'post',
+    data,
+    responseType: 'blob'
+  })
+}
+
 // 结算考勤数据明细
 export function jsMonthDataDetail(data: object) {
   return requestTx({
@@ -95,6 +105,18 @@ export function exportJsMonthDataDetailApi(data: object) {
     responseType: 'blob'
   })
 }
+
+// 导出结算考勤数据汇总
+export function exportMonthDetailByProjectApi(data: object) {
+  return requestTx({
+    url: '/quarterJs/exportMonthDetailByProject',
+    method: 'post',
+    data,
+    responseType: 'blob'
+  })
+}
+
+
 
 // 判断人、工作日是否重复
 export function userWorkRepeat(data: object) {

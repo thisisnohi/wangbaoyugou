@@ -149,28 +149,63 @@
     select USERNAME,WORK_DATE, DAYS_JS from CCB_QUARTER_JS
     where DAYS_JS > 0
       and (USERNAME,WORK_DATE) not in (
-      select USERNAME,WORK_DATE from CCB_APP_KQ where KQ_STATUS = 'Y' and DAYS_JS > 0
+      select USERNAME,WORK_DATE from CCB_APP_KQ
+       where KQ_STATUS = 'Y' and DAYS_JS > 0
+        <if test="startDate!=null and startDate!=''">
+          and work_date <![CDATA[ >=  ]]>  #{startDate}
+        </if>
+        <if test="endDate!=null and endDate!=''">
+          and work_date <![CDATA[ <=  ]]> #{endDate}
+        </if>
     )
+    <if test="startDate!=null and startDate!=''">
+      and work_date <![CDATA[ >=  ]]>  #{startDate}
+    </if>
+    <if test="endDate!=null and endDate!=''">
+      and work_date <![CDATA[ <=  ]]> #{endDate}
+    </if>
     order by USERNAME, WORK_DATE
   </select>
 
   <!-- 月份考勤有，结算考勤无 -->
   <select id="appWithOutJs" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
     select USERNAME,WORK_DATE, DAYS_JS
-    from CCB_APP_KQ where KQ_STATUS = 'Y' and DAYS_JS > 0
-                      and (USERNAME,WORK_DATE) not in (
-        select USERNAME,WORK_DATE from CCB_QUARTER_JS where  DAYS_JS > 0
+    from CCB_APP_KQ
+    where KQ_STATUS = 'Y' and DAYS_JS > 0
+    <if test="startDate!=null and startDate!=''">
+      and work_date <![CDATA[ >=  ]]>  #{startDate}
+    </if>
+    <if test="endDate!=null and endDate!=''">
+      and work_date <![CDATA[ <=  ]]> #{endDate}
+    </if>
+     and (USERNAME,WORK_DATE) not in (
+        select USERNAME,WORK_DATE from CCB_QUARTER_JS
+         where  DAYS_JS > 0
+        <if test="startDate!=null and startDate!=''">
+          and work_date <![CDATA[ >=  ]]>  #{startDate}
+        </if>
+        <if test="endDate!=null and endDate!=''">
+          and work_date <![CDATA[ <=  ]]> #{endDate}
+        </if>
       )
+
     order by USERNAME, WORK_DATE
   </select>
 
   <!-- 考勤不一致 -->
   <select id="daysDiff" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
     select js.USERNAME, js.WORK_DATE, js.DAYS_JS , kq.DAYS_JS DAYS_KQ, Kq.START_TIME,kq.END_TIME,kq.MINS, kq.DEDUCTION,kq.MINS_JS
-    from CCB_QUARTER_JS JS LEFT JOIN CCB_APP_KQ KQ
-                                     on js.USERNAME = kq.USERNAME and js.WORK_DATE = kq.WORK_DATE
+    from CCB_QUARTER_JS JS
+        LEFT JOIN CCB_QUARTER_KQ KQ
+        on js.USERNAME = kq.USERNAME and js.WORK_DATE = kq.WORK_DATE
     where js.DAYS_JS > 0 and kq.KQ_STATUS = 'Y' and kq.DAYS_JS > 0
       and js.DAYS_JS != kq.DAYS_JS
+      <if test="startDate!=null and startDate!=''">
+        and JS.work_date <![CDATA[ >=  ]]>  #{startDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+        and JS.work_date <![CDATA[ <=  ]]> #{endDate}
+      </if>
     order by js.USERNAME, js.WORK_DATE
   </select>
 </mapper>

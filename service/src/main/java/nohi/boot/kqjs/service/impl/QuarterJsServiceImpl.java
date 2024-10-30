@@ -35,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -109,9 +110,7 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         log.info("template:{} outputFile:{}", template, outputFile);
 
         //2,读取Excel模板
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
-             FileOutputStream fos = new FileOutputStream(outputFile);
-        ) {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template); FileOutputStream fos = new FileOutputStream(outputFile);) {
             // 读取Excel模板
             Workbook templatebook = WorkbookFactory.create(is);
             Sheet templateSheet = templatebook.getSheetAt(0);
@@ -304,9 +303,7 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         exportRespMeta.setData(outputFile);
         log.info("生成文件:{}", outputFile);
         // 2,读取Excel模板
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
-             FileOutputStream fos = new FileOutputStream(outputFile);
-        ) {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template); FileOutputStream fos = new FileOutputStream(outputFile);) {
             // 读取Excel模板
             Workbook templatebook = WorkbookFactory.create(is);
             Sheet templateSheet = templatebook.getSheetAt(0);
@@ -464,6 +461,46 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
     }
 
     /**
+     * 项目结算数据
+     *
+     * @param info 查询对象
+     * @return 结果
+     */
+    public RespMeta<MonthData> projectDataDetail(KqQueryDto info) {
+        // 处理用户名
+        if (StringUtils.isNotBlank(info.getUsername())) {
+            info.setUsername("'" + Joiner.on("','").join(info.getUsername().split(",|，")) + "'");
+        }
+
+        if (StringUtils.isNotBlank(info.getProject())) {
+            info.setProject("'" + Joiner.on("','").join(info.getProject().split(",|，")) + "'");
+        }
+
+        // 日期范围
+        LocalDate start = nohi.boot.common.utils.DateUtils.stringToLocalDate(info.getStartDate());
+        LocalDate end = nohi.boot.common.utils.DateUtils.stringToLocalDate(info.getEndDate());
+        log.info("日期范围:[{}-{}]", start, end);
+
+        // 根据日期，生成行数据
+        List<Map<String, ?>> columnList = this.columnList(start, end);
+        // 查询所有数据
+        List<Map<String, ?>> allDataList = mapper.monthDataDetail(info);
+
+        // 按用户转换数据
+        Map<String, Map<String, Map<String, Object>>> projectDataMap = this.convertData2ProjectJs(allDataList);
+
+        // 响应对象
+        RespMeta<MonthData> resp = new RespMeta<>();
+        MonthData data = new MonthData();
+        data.setColumnList(columnList);
+        // 数据对象
+        data.setDataMap(projectDataMap);
+
+        resp.setData(data);
+        return resp;
+    }
+
+    /**
      * 月考勤数据明细
      *
      * @param info 查询对象
@@ -481,9 +518,7 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         exportRespMeta.setData(outputFile);
         log.info("生成文件:{}", outputFile);
         // 2,读取Excel模板
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template);
-             FileOutputStream fos = new FileOutputStream(outputFile);
-        ) {
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template); FileOutputStream fos = new FileOutputStream(outputFile);) {
             // 读取Excel模板
             Workbook templatebook = WorkbookFactory.create(is);
             Sheet templateSheet = templatebook.getSheetAt(0);
@@ -586,6 +621,46 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         return rsList;
     }
 
+
+    /**
+     * 转换考勤数据, 项目人员考勤数据
+     *
+     * @param allDataList 考勤数据
+     */
+    private Map<String, Map<String, Map<String, Object>>> convertData2ProjectJs(List<Map<String, ?>> allDataList) {
+        // 项目数据
+        // key-projectName  value: 项目人员Map(项目下人员信息)   人员Map  日期-工作量
+        Map<String, Map<String, Map<String, Object>>> projectMap = Maps.newHashMap();
+
+        for (Map<String, ?> dateItem : allDataList) {
+            String project = (String) dateItem.get("PROJECT");
+            String userName = (String) dateItem.get("USERNAME");
+
+            // 获取项目下 项目人员Map
+            Map<String, Map<String, Object>> projectUserMap = projectMap.getOrDefault(project, Maps.newHashMap());
+            projectMap.put(project, projectUserMap);
+            // 获取项目下人员Map
+            Map<String, Object> userData = projectUserMap.getOrDefault(userName, Maps.newHashMap());
+            projectUserMap.put(userName, userData);
+
+            // 存放表一天
+            LocalDate date = nohi.boot.common.utils.DateUtils.date2LocalDate((Date) dateItem.get("WORK_DATE"));
+            BigDecimal daysJs = (BigDecimal) dateItem.get("DAYS_JS");
+            // 计算人的合计
+            BigDecimal total = (BigDecimal) userData.getOrDefault("TOTAL", BigDecimal.ZERO);
+            total = total.add(daysJs);
+
+            userData.put(nohi.boot.common.utils.DateUtils.localDateFormat(date, MONTH_DAY) + "_INFO", dateItem);
+            userData.put("USERNAME", userName);
+            userData.put("PROJECT", project);
+            userData.put("TOTAL", total);
+            userData.put(nohi.boot.common.utils.DateUtils.localDateFormat(date, MONTH_DAY), daysJs);
+        }
+
+
+        return projectMap;
+    }
+
     /**
      * 根据日期获取动态列表表头
      *
@@ -657,5 +732,113 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         // 数据对象
         resp.setData(allDataList);
         return resp;
+    }
+
+
+    /**
+     * 月考勤数据明细
+     *
+     * @param info 查询对象
+     * @return 结果
+     */
+    public RespMeta<String> exportMonthDataDetailByProject(KqQueryDto info) {
+        /** 查询数据 **/
+        RespMeta<MonthData> respMeta = this.projectDataDetail(info);
+        List<?> columnList = respMeta.getData().getColumnList();
+        /** 导出 **/
+        String filename = DateUtils.getNow().getTime() + ".xlsx";
+        String template = "templates/project_js.xlsx";
+        String outputFile = jsKqConfig.getFilePath() + File.separator + filename;
+        RespMeta<String> exportRespMeta = new RespMeta();
+        exportRespMeta.setData(outputFile);
+        log.info("生成文件:{}", outputFile);
+        // 2,读取Excel模板
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(template); FileOutputStream fos = new FileOutputStream(outputFile);) {
+            // 读取Excel模板
+            Workbook templatebook = WorkbookFactory.create(is);
+            Sheet templateSheet = templatebook.getSheetAt(0);
+            // 模板行： 列行、数据行
+            Row titleTplRow = templateSheet.getRow(0);
+            Row dataTplRow = templateSheet.getRow(1);
+            Row totalTplRow = templateSheet.getRow(2);
+
+            // 循环项目，生成Excel
+            respMeta.getData().getDataMap().entrySet().stream().sorted((a, b) -> a.getKey().compareTo(b.getKey())).forEach((entry) -> {
+                String project = entry.getKey();
+                Map<String, Map<String, Object>> projectUserMap = entry.getValue();
+                List<String> userNameList = projectUserMap.keySet().stream().sorted().collect(Collectors.toList());
+
+                Sheet sheet = templatebook.createSheet(project);
+                /** 第一行 **/
+                // 列: 日期  人员1 人员2
+                Row coloumnRow = sheet.createRow(0);
+                Cell dateCell = coloumnRow.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                // 拷贝样式
+                ExcelUtils.copyCellStyle(titleTplRow.getCell(0), dateCell);
+
+                for (int i = 0; i < userNameList.size(); i++) {
+                    Cell userCell = coloumnRow.getCell(i+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    ExcelUtils.copyCellStyle(titleTplRow.getCell(1), userCell);
+                    userCell.setCellValue(userNameList.get(i));
+                }
+
+                /** 第二行 **/
+                // 循环日期，按人设置数据
+                int i = 0;
+                for (; i < columnList.size(); i++) {
+                    Row dataRow = sheet.createRow(i + 1);
+                    Map<String, Object> colTitleItem = (Map<String, Object>) columnList.get(i);
+                    String date = (String) colTitleItem.get("value");
+                    // 日期列
+                    Cell dataDateCell = dataRow.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    ExcelUtils.copyCellStyle(dataTplRow.getCell(0), dataDateCell);
+                    dataDateCell.setCellValue(date);
+                    // 人员工作量
+                    for (int j = 0; j < userNameList.size(); j++) {
+                        String userName = userNameList.get(j);
+                        // 获取用户考勤数据
+                        Map<String, Object> userDataMap = projectUserMap.getOrDefault(userName, Maps.newHashMap());
+                        BigDecimal daysJs = (BigDecimal) userDataMap.get(date);
+                        // 不为空时，写入
+                        if (daysJs != null) {
+                            Cell userDataCell = dataRow.getCell(j+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                            ExcelUtils.copyCellStyle(dataTplRow.getCell(1), userDataCell);
+
+                            ExcelUtils.setValue(userDataCell, daysJs);
+                        }
+                    }
+                }
+                // 计算合计
+                Row totalRow = sheet.createRow(i + 1);
+                Cell totalCell = totalRow.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                ExcelUtils.copyCellStyle(totalTplRow.getCell(0), totalCell);
+
+                // 人员工作量
+                for (int j = 0; j < userNameList.size(); j++) {
+                    String userName = userNameList.get(j);
+                    // 获取用户考勤数据
+                    Map<String, Object> userDataMap = projectUserMap.getOrDefault(userName, Maps.newHashMap());
+                    BigDecimal daysJs = (BigDecimal) userDataMap.get("TOTAL");
+
+                    Cell userTotalCell = totalRow.getCell(j+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    ExcelUtils.copyCellStyle(totalTplRow.getCell(1), userTotalCell);
+
+                    ExcelUtils.setValue(userTotalCell, daysJs);
+                }
+            });
+
+
+
+            // 删除第一个sheet页
+            templatebook.removeSheetAt(0);
+
+            // 生成文件
+            templatebook.write(fos);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            exportRespMeta.setResCode("1");
+            exportRespMeta.setResMsg("导出文件异常:" + e.getMessage());
+        }
+        return exportRespMeta;
     }
 }

@@ -4,6 +4,7 @@ package nohi.boot.kqjs.dto.kq;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <h3>ccb-timesheet</h3>
@@ -22,4 +23,6 @@ public class MonthData {
      * 数据属性
      */
     List<?> dataList;
+
+    Map<String, Map<String, Map<String, Object>>>  dataMap;
 }

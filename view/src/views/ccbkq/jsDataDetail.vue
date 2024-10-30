@@ -15,7 +15,7 @@
           placeholder="项目名称,多个以','分隔"
           @change="getTableData(true)"
         ></el-input>
-        
+
         <el-date-picker
           style="width: 230px"
           v-model="query.dateRange"
@@ -42,12 +42,18 @@
           @click="getTableData(true)"
           >{{ $t("message.common.search") }}</el-button
         >
-        
+
         <el-button
             type="success"
             :icon="Download"
             @click="exportTableData()"
-            >导出</el-button>
+            >导出明细</el-button>
+
+        <el-button
+            type="success"
+            :icon="Download"
+            @click="exportProjectData()"
+        >导出项目结算数据</el-button>
 
       </div>
     </div>
@@ -72,7 +78,7 @@
           align="center"
         >
           <template #default="{ row }">
-              <el-tooltip class="item" effect="dark" placement="top"> 
+              <el-tooltip class="item" effect="dark" placement="top">
                 <template v-slot:content>
                   <div>姓名: {{ showItemTips(row[item.value + '_INFO'], 'USERNAME') }} </div>
                   <div>日期: {{ showItemTips(row[item.value + '_INFO'], 'WORK_DATE') }} </div>
@@ -94,7 +100,7 @@
 import { defineComponent, ref, provide, reactive, inject, watch } from "vue";
 import Table from "@/components/table/index.vue";
 import { Page } from "@/components/table/type";
-import { jsMonthDataDetail, exportJsMonthDataDetailApi } from "@/api/ccbkq/monthData";
+import { jsMonthDataDetail, exportJsMonthDataDetailApi, exportMonthDetailByProjectApi } from "@/api/ccbkq/monthData";
 import { ElMessage } from "element-plus";
 import type { LayerInterface } from "@/components/layer/index.vue";
 import { Plus, Search, Delete } from "@element-plus/icons";
@@ -137,7 +143,7 @@ export default defineComponent({
     // params <init> Boolean ，默认为false，用于判断是否需要初始化分页
     const getTableData = (init: boolean) => {
       console.info("===> getTableData");
-      
+
       query.startDate = "";
       query.endDate = "";
       if (query.dateRange && query.dateRange.length >= 2) {
@@ -195,6 +201,30 @@ export default defineComponent({
         });
     };
 
+    // 导出项目结算数据
+    const exportProjectData = () => {
+      console.info("===> exportProjectData");
+      loading.value = true;
+
+      query.startDate = ''
+      query.endDate = ''
+      if (query.dateRange && query.dateRange.length >= 2) {
+        query.startDate = query.dateRange[0]
+        query.endDate = query.dateRange[1]
+      }
+
+      exportMonthDetailByProjectApi(query)
+          .then((res) => {
+            console.info('下载完成')
+          })
+          .catch((error) => {
+            console.error("===>", error);
+          })
+          .finally(() => {
+            console.info("===>finally");
+            loading.value = false;
+          });
+    };
 
     const tableRowClassName = ({ row, rowIndex }) => {
       //改变某行的背景色
@@ -237,6 +267,7 @@ export default defineComponent({
       handleSelectionChange,
       getTableData,
       exportTableData,
+      exportProjectData,
       dayjs,
       numeral,
       showItemTips,

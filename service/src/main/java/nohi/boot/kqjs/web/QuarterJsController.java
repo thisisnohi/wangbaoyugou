@@ -99,6 +99,51 @@ public class QuarterJsController {
         return respMeta;
     }
 
+    @Operation(summary = "导出项目月考勤汇总")
+    @PostMapping("/exportMonthData")
+    @ApiOperationSupport(author = "thisisnohi@163.com")
+    public RespMeta<String> exportProjectMonthData(HttpServletResponse response, @RequestBody KqQueryDto req) {
+        log.info("导出项目月考勤汇总[{}]", JSONObject.toJSONString(req));
+
+        RespMeta<String> respMeta = null;
+        try {
+            respMeta = service.exportMonthData(req);
+
+            if (!FileUtils.exists(respMeta.getData())) {
+                respMeta.setResCode("1");
+                respMeta.setResMsg("文件不存在[" + respMeta.getData() + "]");
+                return respMeta;
+            }
+
+            File file = new File(respMeta.getData());
+            response.reset();
+            response.setContentType("application/octet-stream");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentLength((int) file.length());
+            response.setHeader("Content-Disposition", "attachment;filename=project_month_data.xlsx");
+
+            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
+                byte[] buff = new byte[1024];
+                OutputStream os  = response.getOutputStream();
+                int i = 0;
+                while ((i = bis.read(buff)) != -1) {
+                    os.write(buff, 0, i);
+                    os.flush();
+                }
+                // 如果文件流返回，则不能再返回消息
+                return null;
+            } catch (IOException e) {
+                throw e;
+            }
+
+        } catch (Exception e) {
+            log.error("下载异常:{}", e.getMessage(), e);
+            respMeta = new RespMeta<>();
+            respMeta.setResCode("1");
+            respMeta.setResMsg("下载异常:" + e.getMessage());
+        }
+        return respMeta;
+    }
 
     @Operation(summary = "结算考勤明细")
     @PostMapping("/monthDataDetail")
@@ -131,6 +176,52 @@ public class QuarterJsController {
             response.setCharacterEncoding("UTF-8");
             response.setContentLength((int) file.length());
             response.setHeader("Content-Disposition", "attachment;filename=abc.xlsx");
+
+            try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
+                byte[] buff = new byte[1024];
+                OutputStream os  = response.getOutputStream();
+                int i = 0;
+                while ((i = bis.read(buff)) != -1) {
+                    os.write(buff, 0, i);
+                    os.flush();
+                }
+                // 如果文件流返回，则不能再返回消息
+                return null;
+            } catch (IOException e) {
+                throw e;
+            }
+
+        } catch (Exception e) {
+            log.error("下载异常:{}", e.getMessage(), e);
+            respMeta = new RespMeta<>();
+            respMeta.setResCode("1");
+            respMeta.setResMsg("下载异常:" + e.getMessage());
+        }
+        return respMeta;
+    }
+
+    @Operation(summary = "按项目出导出结算考勤明细")
+    @PostMapping("/exportMonthDetailByProject")
+    @ApiOperationSupport(author = "thisisnohi@163.com")
+    public RespMeta<String> exportMonthDetailByProject(HttpServletResponse response, @RequestBody KqQueryDto req) {
+        log.info("按项目出导出结算考勤明细[{}]", JSONObject.toJSONString(req));
+
+        RespMeta<String> respMeta = null;
+        try {
+            respMeta = service.exportMonthDataDetailByProject(req);
+
+            if (!FileUtils.exists(respMeta.getData())) {
+                respMeta.setResCode("1");
+                respMeta.setResMsg("文件不存在[" + respMeta.getData() + "]");
+                return respMeta;
+            }
+
+            File file = new File(respMeta.getData());
+            response.reset();
+            response.setContentType("application/octet-stream");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentLength((int) file.length());
+            response.setHeader("Content-Disposition", "attachment;filename=project_js.xlsx");
 
             try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
                 byte[] buff = new byte[1024];
