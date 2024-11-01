@@ -35,6 +35,11 @@ public interface QuarterJsMapper extends BaseMapper<QuarterJs> {
      */
     List<Map<String,?>> monthDataDetail(KqQueryDto info);
 
+    /**
+     * 核对考勤明细
+     */
+    List<Map<String,?>> checkMonthDataDetail(KqQueryDto info);
+
 
     /**
      * 判断人、工作日是否重复

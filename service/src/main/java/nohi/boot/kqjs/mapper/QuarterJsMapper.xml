@@ -135,6 +135,25 @@
       </if>
   </select>
 
+  <!-- 核对考勤明细 -->
+  <select id="checkMonthDataDetail" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
+    select APP.*
+    from CCB_QUARTER_JS_CHECK APP
+    where DAYS_JS > 0
+    <if test="username!=null and username!=''">
+      AND username in (${username})
+    </if>
+    <if test="project!=null and project!=''">
+      AND project in (${project})
+    </if>
+    <if test="startDate!=null and startDate!=''">
+      and work_date <![CDATA[ >=  ]]>  #{startDate}
+    </if>
+    <if test="endDate!=null and endDate!=''">
+      and work_date <![CDATA[ <=  ]]> #{endDate}
+    </if>
+  </select>
+
   <!-- 判断人、工作日是否重复 -->
   <select id="userWorkRepeat" parameterType="nohi.boot.kqjs.dto.kq.KqQueryDto" resultType="java.util.Map">
     select USERNAME, WORK_DATE , count(1) COUNT, sum(DAYS_JS) SUM

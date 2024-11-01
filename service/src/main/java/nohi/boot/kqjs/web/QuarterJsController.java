@@ -74,7 +74,7 @@ public class QuarterJsController {
             response.setContentType("application/octet-stream");
             response.setCharacterEncoding("UTF-8");
             response.setContentLength((int) file.length());
-            response.setHeader("Content-Disposition", "attachment;filename=abc.xlsx");
+            response.setHeader("Content-Disposition", "attachment;filename=js_month.xlsx");
 
             try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
                 byte[] buff = new byte[1024];
@@ -100,7 +100,7 @@ public class QuarterJsController {
     }
 
     @Operation(summary = "导出项目月考勤汇总")
-    @PostMapping("/exportMonthData")
+    @PostMapping("/exportProjectMonthData")
     @ApiOperationSupport(author = "thisisnohi@163.com")
     public RespMeta<String> exportProjectMonthData(HttpServletResponse response, @RequestBody KqQueryDto req) {
         log.info("导出项目月考勤汇总[{}]", JSONObject.toJSONString(req));

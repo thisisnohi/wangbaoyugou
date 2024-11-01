@@ -59,6 +59,15 @@ const route: Route[] = [
         }
       },
       {
+        path: 'js_check_data_detail',
+        component: createNameComponent(() => import('@/views/ccbkq/jsCheckDataDetail.vue')),
+        name: 'js_check_data_detail',
+        meta: {
+          title: '结算考勤核对明细',
+          icon: 'sfont system-yonghu'
+        }
+      },
+      {
         path: 'data_compare',
         component: createNameComponent(() => import('@/views/ccbkq/dataCompare.vue')),
         name: 'data_compare',

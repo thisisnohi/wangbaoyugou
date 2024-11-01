@@ -444,7 +444,12 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         columnList.add(this.columnMap("TOTAL", "汇总"));
 
         // 查询所有数据
-        List<Map<String, ?>> allDataList = mapper.monthDataDetail(info);
+        List<Map<String, ?>> allDataList = null;
+        if (info.isCheck()) {
+            allDataList = mapper.checkMonthDataDetail(info);
+        } else {
+            allDataList = mapper.monthDataDetail(info);
+        }
 
         // 按用户转换数据
         List<Map<String, ?>> rsDataList = this.convertData(allDataList, info.isByProject());
@@ -484,7 +489,12 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
         // 根据日期，生成行数据
         List<Map<String, ?>> columnList = this.columnList(start, end);
         // 查询所有数据
-        List<Map<String, ?>> allDataList = mapper.monthDataDetail(info);
+        List<Map<String, ?>> allDataList = null;
+        if (info.isCheck()) {
+            allDataList = mapper.checkMonthDataDetail(info);
+        } else {
+            allDataList = mapper.monthDataDetail(info);
+        }
 
         // 按用户转换数据
         Map<String, Map<String, Map<String, Object>>> projectDataMap = this.convertData2ProjectJs(allDataList);
@@ -777,7 +787,7 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
                 ExcelUtils.copyCellStyle(titleTplRow.getCell(0), dateCell);
 
                 for (int i = 0; i < userNameList.size(); i++) {
-                    Cell userCell = coloumnRow.getCell(i+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    Cell userCell = coloumnRow.getCell(i + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     ExcelUtils.copyCellStyle(titleTplRow.getCell(1), userCell);
                     userCell.setCellValue(userNameList.get(i));
                 }
@@ -801,7 +811,7 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
                         BigDecimal daysJs = (BigDecimal) userDataMap.get(date);
                         // 不为空时，写入
                         if (daysJs != null) {
-                            Cell userDataCell = dataRow.getCell(j+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                            Cell userDataCell = dataRow.getCell(j + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             ExcelUtils.copyCellStyle(dataTplRow.getCell(1), userDataCell);
 
                             ExcelUtils.setValue(userDataCell, daysJs);
@@ -820,13 +830,12 @@ public class QuarterJsServiceImpl extends ServiceImpl<QuarterJsMapper, QuarterJs
                     Map<String, Object> userDataMap = projectUserMap.getOrDefault(userName, Maps.newHashMap());
                     BigDecimal daysJs = (BigDecimal) userDataMap.get("TOTAL");
 
-                    Cell userTotalCell = totalRow.getCell(j+1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    Cell userTotalCell = totalRow.getCell(j + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                     ExcelUtils.copyCellStyle(totalTplRow.getCell(1), userTotalCell);
 
                     ExcelUtils.setValue(userTotalCell, daysJs);
                 }
             });
-
 
 
             // 删除第一个sheet页

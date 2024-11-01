@@ -29,4 +29,8 @@ public class KqQueryDto {
      * 按项目统计？
      */
     private boolean byProject;
+    /**
+     * 是否检查数据
+     */
+    private boolean check;
 }
