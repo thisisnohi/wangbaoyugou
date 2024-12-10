@@ -9,7 +9,7 @@
           placeholder="姓名,多个以,分隔"
           @change="getTableData(true)"
         ></el-input>
-        
+
         <el-date-picker
           style="width: 230px"
           v-model="query.dateRange"
@@ -84,6 +84,7 @@
         <el-table-column prop="DEDUCTION" label="扣减" align="center" />
         <el-table-column prop="MINS_JS" label="结算分钟数" align="center" />
         <el-table-column prop="DAYS_JS" label="结算人天" align="center" />
+        <el-table-column prop="DAYS_JS_RS" label="行内结算人天" align="center" />
         <el-table-column prop="MSG" label="备注" align="center" />
       </Table>
     </div>
@@ -229,7 +230,7 @@ export default defineComponent({
       if (row.STATUS === 1) {
         console.info("ROW ", rowIndex, " 异常")
         return "error";
-      } 
+      }
     };
 
     const date2Time = (date:any) => { //改变某行的背景色

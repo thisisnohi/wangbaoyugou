@@ -130,7 +130,8 @@ public class MonthDataService {
                 ExcelUtils.setValue(row.getCell(10, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("DEDUCTION"));
                 ExcelUtils.setValue(row.getCell(11, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("MINS_JS"));
                 ExcelUtils.setValue(row.getCell(12, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("DAYS_JS"));
-                ExcelUtils.setValue(row.getCell(13, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("MSG"));
+                ExcelUtils.setValue(row.getCell(13, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("DAYS_JS_RS"));
+                ExcelUtils.setValue(row.getCell(14, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK), item.get("MSG"));
 
                 templateSheet.setForceFormulaRecalculation(true);
             }
