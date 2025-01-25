@@ -33,7 +33,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	public static final String DOTTED_DATE = "yyyy.MM.dd";
 
 	public static final String TIMESTAMP = "yyyyMMddHHmmssSSS";
-	public static final int DATE_LEN_8 = 8;
+
+	public static final int DATE_LEN_8 = SIMPLE_DATE.length();
+	public static final int DATE_LEN_19 = HYPHEN_TIME.length();
 
 
 
@@ -53,7 +55,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		try {
 			return sdf.parse(value);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return null;
 		}
 	}
@@ -249,6 +250,17 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	public static LocalDate stringToLocalDate(String dateStr, String pattern) {
 		return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(pattern));
 	}
+
+	public static LocalDateTime stringToLocalTime(String dateStr) {
+		if (StringUtils.isNotBlank(dateStr) && dateStr.length() == DATE_LEN_19) {
+			return stringToLocalDateTime(dateStr, HYPHEN_TIME);
+		}
+		return stringToLocalDateTime(dateStr, HYPHEN_DATE);
+	}
+	public static LocalDateTime stringToLocalDateTime(String dateStr, String pattern) {
+		return LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern(pattern));
+	}
+
 
 	public static String localDateFormat(LocalDate localDate, String pattern) {
 		DateTimeFormatter dateformat = DateTimeFormatter.ofPattern(null == pattern ? HYPHEN_DATE : pattern);

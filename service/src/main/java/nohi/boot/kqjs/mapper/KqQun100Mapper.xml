@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nohi.boot.kqjs.mapper.KqQun100Mapper">
+  <resultMap id="BaseResultMap" type="nohi.boot.kqjs.entity.KqQun100">
+    <result column="CREATED_TS" jdbcType="TIMESTAMP" property="createdTs"/>    <!-- 记录创建时间 -->
+    <result column="WORK_DATE" jdbcType="DATE" property="workDate"/>    <!-- 工作日 -->
+    <result column="USERNAME" jdbcType="VARCHAR" property="username"/>    <!-- 姓名 -->
+    <result column="CARD_TIME_DOOR" jdbcType="TIMESTAMP" property="cardTimeDoor"/>    <!-- 打卡时间-门禁 -->
+    <result column="CARD_TIME_APP" jdbcType="TIMESTAMP" property="cardTimeApp"/>    <!-- 打卡时间-移动APP -->
+    <result column="REMARK1" jdbcType="VARCHAR" property="remark1"/>    <!-- 备用字段1 -->
+    <result column="REMARK2" jdbcType="VARCHAR" property="remark2"/>    <!-- 备用字段2 -->
+  </resultMap>
+
+  <select id="selectByExample" parameterType="nohi.boot.kqjs.entity.KqQun100" resultMap="BaseResultMap">
+    select *
+    from KQ_QUN_100
+    <where>
+      <if test="createdTs != null">
+        AND CREATED_TS = #{createdTs,jdbcType=TIMESTAMP}
+      </if>
+      <if test="workDate != null">
+        AND WORK_DATE = #{workDate,jdbcType=DATE}
+      </if>
+      <if test="username != null and username != '' ">
+        AND USERNAME = #{username,jdbcType=VARCHAR}
+      </if>
+      <if test="cardTimeDoor != null">
+        AND CARD_TIME_DOOR = #{cardTimeDoor,jdbcType=TIMESTAMP}
+      </if>
+      <if test="cardTimeApp != null">
+        AND CARD_TIME_APP = #{cardTimeApp,jdbcType=TIMESTAMP}
+      </if>
+      <if test="remark1 != null and remark1 != '' ">
+        AND REMARK1 = #{remark1,jdbcType=VARCHAR}
+      </if>
+      <if test="remark2 != null and remark2 != '' ">
+        AND REMARK2 = #{remark2,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <select id="queryDetail" resultType="java.util.Map">
+    <if test="username!=null and username!=''">
+      AND username in (${username})
+    </if>
+    <if test="startDate!=null and startDate!=''">
+      and work_date <![CDATA[ >=  ]]>  #{startDate}
+    </if>
+    <if test="endDate!=null and endDate!=''">
+      and work_date <![CDATA[ <=  ]]> #{endDate}
+    </if>
+
+  </select>
+
+  <delete id="deleteDataByDateRange" >
+    delete
+    from KQ_QUN_100
+    where WORK_DATE <![CDATA[ >=  ]]>  #{startDate}
+      AND WORK_DATE <![CDATA[ <=  ]]>  #{endDate}
+
+  </delete>
+
+</mapper>

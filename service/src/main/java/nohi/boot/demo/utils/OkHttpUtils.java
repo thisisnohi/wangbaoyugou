@@ -334,14 +334,21 @@ public class OkHttpUtils {
      * @throws IOException
      */
     public String postJson(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder().url(url).post(body).build();
-        Response response = mOkHttpClient.newCall(request).execute();
+        Response response = postJsonReturnResponse(url, json);
         if (response.isSuccessful()) {
             return response.body().string();
         } else {
             throw new IOException("Unexpected code " + response);
         }
+    }
+
+    /**
+     * 针对json post处理
+     */
+    public Response postJsonReturnResponse(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder().url(url).post(body).build();
+        return mOkHttpClient.newCall(request).execute();
     }
 
     public String postJson(String url, Map<String, String> headerMap, String json) throws IOException {

@@ -76,6 +76,15 @@ const route: Route[] = [
           icon: 'sfont system-yonghu'
         }
       },
+      {
+        path: 'qun100',
+        component: createNameComponent(() => import('@/views/ccbkq/qun100.vue')),
+        name: 'qun100',
+        meta: {
+          title: '群报数',
+          icon: 'sfont system-yonghu'
+        }
+      },
     ]
   }
 ]

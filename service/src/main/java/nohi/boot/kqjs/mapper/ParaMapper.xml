@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nohi.boot.kqjs.mapper.ParaMapper">
+  <resultMap id="BaseResultMap" type="nohi.boot.kqjs.entity.PubPara">
+    <id column="id" jdbcType="VARCHAR" property="id"/>    <!-- ID -->
+    <result column="CREATED_TS" jdbcType="TIMESTAMP" property="createdTs"/>    <!-- 记录创建时间 -->
+    <result column="PARA_NAME" jdbcType="VARCHAR" property="paraName"/>    <!-- 参数名 -->
+    <result column="PARA_VALUE" jdbcType="VARCHAR" property="paraValue"/>    <!-- 参数值 -->
+    <result column="REMARK1" jdbcType="VARCHAR" property="remark1"/>    <!-- 备用字段1 -->
+    <result column="REMARK2" jdbcType="VARCHAR" property="remark2"/>    <!-- 备用字段2 -->
+  </resultMap>
+
+
+  <select id="selectByExample" parameterType="nohi.boot.kqjs.entity.PubPara" resultMap="BaseResultMap">
+    select *
+    from PUB_PARA
+    <where>
+      <if test="createdTs != null">
+        AND CREATED_TS = #{createdTs,jdbcType=TIMESTAMP}
+      </if>
+      <if test="paraName != null and paraName != '' ">
+        AND PARA_NAME = #{paraName,jdbcType=VARCHAR}
+      </if>
+      <if test="paraValue != null and paraValue != '' ">
+        AND PARA_VALUE = #{paraValue,jdbcType=VARCHAR}
+      </if>
+      <if test="remark1 != null and remark1 != '' ">
+        AND REMARK1 = #{remark1,jdbcType=VARCHAR}
+      </if>
+      <if test="remark2 != null and remark2 != '' ">
+        AND REMARK2 = #{remark2,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectOneByParaName" parameterType="string" resultMap="BaseResultMap">
+    select *
+    from PUB_PARA
+    where PARA_NAME = #{paraName,jdbcType=VARCHAR}
+    limit 1
+  </select>
+
+  <insert id="insertSelective" parameterType="nohi.boot.kqjs.entity.PubPara">
+    insert into PUB_PARA
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createdTs != null">
+        CREATED_TS,
+      </if>
+      <if test="paraName != null">
+        PARA_NAME,
+      </if>
+      <if test="paraValue != null">
+        PARA_VALUE,
+      </if>
+      <if test="remark1 != null">
+        REMARK1,
+      </if>
+      <if test="remark2 != null">
+        REMARK2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTs != null">
+        #{createdTs,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paraName != null">
+        #{paraName,jdbcType=VARCHAR},
+      </if>
+      <if test="paraValue != null">
+        #{paraValue,jdbcType=VARCHAR},
+      </if>
+      <if test="remark1 != null">
+        #{remark1,jdbcType=VARCHAR},
+      </if>
+      <if test="remark2 != null">
+        #{remark2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateSelectiveById" parameterType="nohi.boot.kqjs.entity.KqMembers">
+    update PUB_PARA
+    <set>
+      <if test="createdTs != null">
+        CREATED_TS = #{createdTs,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paraName != null">
+        PARA_NAME = #{paraName,jdbcType=VARCHAR},
+      </if>
+      <if test="paraValue != null">
+        PARA_VALUE = #{paraValue,jdbcType=VARCHAR},
+      </if>
+      <if test="remark1 != null">
+        REMARK1 = #{remark1,jdbcType=VARCHAR},
+      </if>
+      <if test="remark2 != null">
+        REMARK2 = #{remark2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE
+    id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nohi.boot.kqjs.mapper.KqMembersMapper">
+  <resultMap id="BaseResultMap" type="nohi.boot.kqjs.entity.KqMembers">
+    <result column="CREATED_TS" jdbcType="TIMESTAMP" property="createdTs" />    <!-- 记录创建时间 -->
+    <result column="USERNAME" jdbcType="VARCHAR" property="username" />    <!-- 姓名 -->
+    <result column="NICKNAME" jdbcType="VARCHAR" property="nickname" />    <!-- 妮称 -->
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />    <!-- 头像 -->
+    <result column="USER_STATUS" jdbcType="VARCHAR" property="userStatus" />    <!-- 人员状态： ON-有效； OFF-失效 -->
+    <result column="REMARK1" jdbcType="VARCHAR" property="remark1" />    <!-- 备用字段1 -->
+    <result column="REMARK2" jdbcType="VARCHAR" property="remark2" />    <!-- 备用字段2 -->
+  </resultMap>
+  <select id="selectByExample" parameterType="nohi.boot.kqjs.entity.KqMembers" resultMap="BaseResultMap">
+    select *
+    from KQ_MEMBERS
+    <where>
+    <if test="createdTs != null">
+       AND CREATED_TS = #{createdTs,jdbcType=TIMESTAMP}
+    </if>
+    <if test="username != null and username != '' ">
+       AND USERNAME = #{username,jdbcType=VARCHAR}
+    </if>
+    <if test="nickname != null and nickname != '' ">
+       AND NICKNAME = #{nickname,jdbcType=VARCHAR}
+    </if>
+    <if test="icon != null and icon != '' ">
+       AND ICON = #{icon,jdbcType=VARCHAR}
+    </if>
+    <if test="userStatus != null and userStatus != '' ">
+       AND USER_STATUS = #{userStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="remark1 != null and remark1 != '' ">
+       AND REMARK1 = #{remark1,jdbcType=VARCHAR}
+    </if>
+    <if test="remark2 != null and remark2 != '' ">
+       AND REMARK2 = #{remark2,jdbcType=VARCHAR}
+    </if>
+    </where>
+  </select>
+  <insert id="insert" parameterType="nohi.boot.kqjs.entity.KqMembers">
+    insert into KQ_MEMBERS (CREATED_TS, USERNAME, NICKNAME,
+      ICON, USER_STATUS, REMARK1,
+      REMARK2)
+    values (#{createdTs,jdbcType=TIMESTAMP}, #{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR},
+      #{icon,jdbcType=VARCHAR}, #{userStatus,jdbcType=VARCHAR}, #{remark1,jdbcType=VARCHAR},
+      #{remark2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="nohi.boot.kqjs.entity.KqMembers">
+    insert into KQ_MEMBERS
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fuid != null">
+        fuid,
+      </if>
+      <if test="sno != null">
+        sno,
+      </if>
+      <if test="createdTs != null">
+        CREATED_TS,
+      </if>
+      <if test="username != null">
+        USERNAME,
+      </if>
+      <if test="nickname != null">
+        NICKNAME,
+      </if>
+      <if test="icon != null">
+        ICON,
+      </if>
+      <if test="userStatus != null">
+        USER_STATUS,
+      </if>
+      <if test="remark1 != null">
+        REMARK1,
+      </if>
+      <if test="remark2 != null">
+        REMARK2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fuid != null">
+        #{fuid,jdbcType=VARCHAR},
+      </if>
+      <if test="sno != null">
+        #{sno,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTs != null">
+        #{createdTs,jdbcType=TIMESTAMP},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="userStatus != null">
+        #{userStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="remark1 != null">
+        #{remark1,jdbcType=VARCHAR},
+      </if>
+      <if test="remark2 != null">
+        #{remark2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>
